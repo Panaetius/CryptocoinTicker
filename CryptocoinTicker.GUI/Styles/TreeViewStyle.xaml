@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:displayClasses="clr-namespace:CryptocoinTicker.GUI.DisplayClasses">
+    <HierarchicalDataTemplate ItemsSource="{Binding Pairs}" DataType="{x:Type displayClasses:Exchange}">
+        <Label Content="{Binding Name}" Foreground="LightBlue"/>
+        <HierarchicalDataTemplate.ItemContainerStyle>
+            <Style TargetType="TreeViewItem">
+                <Setter Property="Focusable" Value="False"/>
+            </Style>
+        </HierarchicalDataTemplate.ItemContainerStyle>
+    </HierarchicalDataTemplate>
+
+    <DataTemplate DataType="{x:Type displayClasses:CurrencyPair}">
+        <Label Content="{Binding Name}" Foreground="LightBlue"/>
+    </DataTemplate>
+</ResourceDictionary>
