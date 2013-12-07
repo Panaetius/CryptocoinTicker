@@ -10,7 +10,17 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Styles/TreeViewStyle.xaml"/>
+                <ResourceDictionary>
+                    <CollectionViewSource x:Key="GroupedExchanges"                               
+                      Source="{Binding Path=CurrencyPairs}">
+                        <CollectionViewSource.GroupDescriptions>
+                            <PropertyGroupDescription PropertyName="ExchangeName" />
+                        </CollectionViewSource.GroupDescriptions>
+                    </CollectionViewSource>
+                    <Style x:Key="NoHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -21,9 +31,56 @@
                     <MenuItem.Resources>
                         <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
                     </MenuItem.Resources>
-                    <TreeView HorizontalAlignment="Stretch" ItemsSource="{Binding Exchanges}" Margin="0" Padding="0" Background="Black" Foreground="LightBlue" >
 
-                    </TreeView>
+                    <ListView DataContext="{StaticResource GroupedExchanges}"  ItemsSource="{Binding}" SelectedItem="{Binding DataContext.SelectedCurrencyPair, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Foreground="LightBlue" Background="Black" Padding="3">
+                        <ListView.View>
+                            <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
+                                <GridViewColumn Width="50" DisplayMemberBinding="{Binding CurrencyPairName}" />
+                            </GridView>
+                        </ListView.View>
+                        <ListView.ItemContainerStyle>
+                            <Style>
+                                <Style.Triggers>
+                                    <Trigger Property="Control.IsMouseOver" Value="True">
+                                        <Setter Property="Control.Background" Value="Transparent" />
+                                    </Trigger>
+                                    <Trigger Property="Control.IsFocused" Value="True">
+                                        <Setter Property="Control.Background" Value="Transparent"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+                    </ListView>
+                </MenuItem>
+                <MenuItem Header="Settings" Background="Black" Foreground="LightBlue">
+                    <MenuItem.Resources>
+                        <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
+                    </MenuItem.Resources>
+                    <Grid Background="Black">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Content="Refresh Interval" Foreground="LightBlue"/>
+                        <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding UpdateIntervals}" DisplayMemberPath="Item1" 
+                                  SelectedValuePath="Item2" SelectedValue="{Binding UpdateInterval, Mode=TwoWay}"/>
+                        <Label Grid.Column="0" Grid.Row="1" Content="Period Size" Foreground="LightBlue"/>
+                        <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding PeriodSizes}" DisplayMemberPath="Item1" 
+                                  SelectedValuePath="Item2" SelectedValue="{Binding PeriodSize, Mode=TwoWay}"/>
+                    </Grid>
                 </MenuItem>
             </Menu>
             <Grid>

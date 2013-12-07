@@ -2,6 +2,7 @@
 {
     public class CurrencyPair
     {
-        public string Name { get; set; }
+        public string ExchangeName { get; set; }
+        public string CurrencyPairName { get; set; }
     }
 }

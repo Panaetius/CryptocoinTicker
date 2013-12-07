@@ -40,7 +40,7 @@ namespace CryptocoinTicker.BusinessLogic
                 .ToDictionary(g => g.Key, g => g.Select(t => t.Metadata.Pair).ToList());
         }
 
-        public ITickerApi GetTicket(string exchange, string pair)
+        public ITickerApi GetTicker(string exchange, string pair)
         {
             return this.Tickers.First(t => t.Metadata.Exchange == exchange && t.Metadata.Pair == pair).Value;
         }
