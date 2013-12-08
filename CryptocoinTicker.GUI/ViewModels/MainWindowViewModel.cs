@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Windows.Input;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 
 using CryptocoinTicker.BusinessLogic;
 using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
 using CryptocoinTicker.GUI.Helpers;
-using CryptocoinTicker.GUI.Views;
 
 namespace CryptocoinTicker.GUI.ViewModels
 {
@@ -31,6 +29,10 @@ namespace CryptocoinTicker.GUI.ViewModels
 
         private IDepthView depthView;
 
+        private IEnumerable<Candle> candles;
+
+        private Depth depth;
+
         public MainWindowViewModel()
         {
             this.host = new TickerHost();
@@ -40,42 +42,56 @@ namespace CryptocoinTicker.GUI.ViewModels
             timer.Tick += TimerOnTick;
         }
 
-        private void TimerOnTick(object sender, EventArgs eventArgs)
+        private async void TimerOnTick(object sender, EventArgs eventArgs)
         {
             if (this.currenTickerApi == null)
             {
                 return;
             }
 
-            this.ChartView.Clear();
+            timer.Stop();
 
             this.ChartView.PeriodSize = this.PeriodSize;
-            this.ChartView.PeriodsToDisplay = 100;
 
-            var trades = currenTickerApi.GetTrades();
+            await this.GetTickerData();
+
+            this.ChartView.Clear();
+
+            foreach (var candle in this.candles)
+            {
+                this.ChartView.AddCandle(candle);
+            }
+
+            this.DepthView.SetDepth(this.depth);
+
+            this.ChartView.Redraw();
+
+            timer.Start();
+        }
+
+        private async Task<int> GetTickerData()
+        {
+            var trades = await currenTickerApi.GetTrades();
 
             var candles =
                 trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
                     .Select(
                         g =>
                         new Candle
-                            {
-                                Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
-                                Close = g.Last().Price,
-                                Open = g.First().Price,
-                                High = g.Max(c => c.Price),
-                                Low = g.Min(c => c.Price),
-                                Volume = g.Sum(c => Math.Abs(c.Amount))
-                            });
+                        {
+                            Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
+                            Close = g.Last().Price,
+                            Open = g.First().Price,
+                            High = g.Max(c => c.Price),
+                            Low = g.Min(c => c.Price),
+                            Volume = g.Sum(c => Math.Abs(c.Amount))
+                        });
 
-            foreach (var candle in candles)
-            {
-                this.ChartView.AddCandle(candle);
-            }
+            this.candles = candles;
 
-            this.ChartView.Redraw();
+            this.depth = await this.currenTickerApi.GetDepth();
 
-                    this.DepthView.SetDepth(this.currenTickerApi.GetDepth());
+            return 0;
         }
 
         public List<CurrencyPair> CurrencyPairs
@@ -100,11 +116,11 @@ namespace CryptocoinTicker.GUI.ViewModels
             {
                 this.selectedCurrencyPair = value;
 
+                this.ChartView.PeriodsToDisplay = 100;
+
                 currenTickerApi = host.GetTicker(value.ExchangeName, value.CurrencyPairName);
 
                 this.TimerOnTick(null, null);
-
-                timer.Start();
 
                 this.OnPropertyChanged("SelectedCurrencyPair");
             }
@@ -140,7 +156,6 @@ namespace CryptocoinTicker.GUI.ViewModels
                 timer.Stop();
                 timer.Interval = new TimeSpan(0, 0, value);
                 this.TimerOnTick(null, null);
-                timer.Start();
 
                 this.OnPropertyChanged("UpdateInterval");
             }
@@ -178,6 +193,7 @@ namespace CryptocoinTicker.GUI.ViewModels
             set
             {
                 this.periodSize = value;
+                this.TimerOnTick(null, null);
                 this.OnPropertyChanged("PeriodSize");
             }
         }

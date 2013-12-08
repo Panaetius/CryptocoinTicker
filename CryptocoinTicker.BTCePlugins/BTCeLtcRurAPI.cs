@@ -8,8 +8,8 @@ namespace CryptocoinTicker.BTCePlugins
 {
     [Export(typeof(ITickerApi))]
     [ExportMetadata("Exchange", "BTCe")]
-    [ExportMetadata("Pair", "LTC/USD")]
-    public class BTCeLtcUsdAPI:BTCeAPI, ITickerApi
+    [ExportMetadata("Pair", "LTC/RUR")]
+    public class BTCeLtcRurAPI : BTCeAPI, ITickerApi
     {
         public string FromCurrency
         {
@@ -23,18 +23,18 @@ namespace CryptocoinTicker.BTCePlugins
         {
             get
             {
-                return "USD";
+                return "RUR";
             }
         }
 
         public async Task<IEnumerable<Trade>> GetTrades()
         {
-            return await Task.Run(() => this.GetTrades("ltc_usd"));
+            return await Task.Run(() => this.GetTrades("ltc_rur"));
         }
 
         public async Task<Depth> GetDepth()
         {
-            return await Task.Run(() => this.GetDepth("ltc_usd"));
+            return await Task.Run(() => this.GetDepth("ltc_rur"));
         }
     }
 }

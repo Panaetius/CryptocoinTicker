@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 
 using CryptocoinTicker.Contract;
 
-namespace CryptocoinTicker.BTCePlugins
+namespace CryptocoinTicker.VircurexPlugins
 {
     [Export(typeof(ITickerApi))]
-    [ExportMetadata("Exchange", "BTCe")]
-    [ExportMetadata("Pair", "LTC/USD")]
-    public class BTCeLtcUsdAPI:BTCeAPI, ITickerApi
+    [ExportMetadata("Exchange", "Vircurex")]
+    [ExportMetadata("Pair", "BTC/RUR")]
+    public class VircurexBtcRurAPI:VircurexAPI, ITickerApi
     {
         public string FromCurrency
         {
             get
             {
-                return "LTC";
+                return "BTC";
             }
         }
 
@@ -23,18 +23,19 @@ namespace CryptocoinTicker.BTCePlugins
         {
             get
             {
-                return "USD";
+                return "RUR";
             }
         }
 
         public async Task<IEnumerable<Trade>> GetTrades()
         {
-            return await Task.Run(() => this.GetTrades("ltc_usd"));
+            return await Task.Run(() => this.GetTrades("btc", "rur"));
         }
 
         public async Task<Depth> GetDepth()
         {
-            return await Task.Run(() => this.GetDepth("ltc_usd"));
+            return await Task.Run(() => this.GetDepth("btc", "rur"));
         }
     }
 }
+

@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CryptocoinTicker.Contract
 {
     public interface ITickerApi
     {
-        string FromCurrency { get; }
+        Task<IEnumerable<Trade>> GetTrades();
 
-        string ToCurrency { get; }
-
-        IEnumerable<Trade> GetTrades();
-
-        Depth GetDepth();
+        Task<Depth> GetDepth();
     }
 }

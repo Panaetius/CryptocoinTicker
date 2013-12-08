@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 
 using CryptocoinTicker.Contract;
 
@@ -26,12 +27,12 @@ namespace CryptocoinTicker.BTCePlugins
             }
         }
 
-        public IEnumerable<Trade> GetTrades()
+        public async Task<IEnumerable<Trade>> GetTrades()
         {
             return this.GetTrades("ltc_eur");
         }
 
-        public Depth GetDepth()
+        public async Task<Depth> GetDepth()
         {
             return this.GetDepth("ltc_eur");
         }

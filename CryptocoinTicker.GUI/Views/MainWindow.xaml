@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:CryptocoinTicker.GUI.ViewModels"
         xmlns:views="clr-namespace:CryptocoinTicker.GUI.Views"
-        Title="MainWindow" Height="768" Width="1280">
+        Title="MainWindow" Height="768" Width="1280" Icon="../icon.ico">
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>
@@ -39,7 +39,7 @@
                     </MenuItem.Resources>
 
                     <ListView DataContext="{StaticResource GroupedExchanges}"  ItemsSource="{Binding}" SelectedItem="{Binding DataContext.SelectedCurrencyPair, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" 
-                              Foreground="LightBlue" Background="Black" Padding="3" Width="100">
+                              Foreground="LightBlue" Background="Black" Padding="3" Width="200">
                         <ListView.View>
                             <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
                                 <GridViewColumn DisplayMemberBinding="{Binding CurrencyPairName}" />
@@ -59,11 +59,24 @@
                         </ListView.ItemContainerStyle>
                         <ListView.GroupStyle>
                             <GroupStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Path=Name}"/>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <Expander IsExpanded="False" Background="Black" Foreground="LightBlue">
+                                                        <Expander.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="LightBlue" FontSize="22" VerticalAlignment="Bottom" />
+                                                            </StackPanel>
+                                                        </Expander.Header>
+                                                        <ItemsPresenter />
+                                                    </Expander>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
                             </GroupStyle>
                         </ListView.GroupStyle>
                     </ListView>
@@ -101,6 +114,5 @@
                 <ContentControl Name="DepthView" Content="{Binding DepthView, Mode=TwoWay}" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
         </DockPanel>
-
     </Grid>
 </Window>

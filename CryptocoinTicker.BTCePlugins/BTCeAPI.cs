@@ -78,7 +78,7 @@ namespace CryptocoinTicker.BTCePlugins
                 var parsedTrade = new Trade
                 {
                     Date =
-                        UnixEpoch.AddSeconds(trade["date"].Value<long>()),
+                        UnixEpoch.AddSeconds(trade["date"].Value<long>()).ToLocalTime(),
                     TransactionId = trade["tid"].Value<string>(),
                     Amount = trade["amount"].Value<decimal>(),
                     Price = trade["price"].Value<decimal>()
@@ -87,7 +87,7 @@ namespace CryptocoinTicker.BTCePlugins
                 trades.Add(parsedTrade);
             }
 
-            trades = trades.Distinct().OrderBy(t => t.Date).ToList();
+            trades = trades.GroupBy(t => t.TransactionId).Select(g => g.First()).OrderBy(t => t.Date).ToList();
 
             if (File.Exists(filename))
             {

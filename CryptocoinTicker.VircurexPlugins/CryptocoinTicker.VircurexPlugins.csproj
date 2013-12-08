@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A7C8D79B-E421-4EFE-8506-07CF6147AEB0}</ProjectGuid>
+    <ProjectGuid>{1C6A1A42-BD19-4ED4-B94D-4C9BCFB9F16A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CryptocoinTicker.BTCePlugins</RootNamespace>
-    <AssemblyName>CryptocoinTicker.BTCePlugins</AssemblyName>
+    <RootNamespace>CryptocoinTicker.VircurexPlugins</RootNamespace>
+    <AssemblyName>CryptocoinTicker.VircurexPlugins</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,29 +44,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BTCeAPI.cs" />
-    <Compile Include="BTCeLtcEurAPI.cs" />
-    <Compile Include="BTCeLtcUsdAPI.cs" />
-    <Compile Include="BTCeBtcUsdAPI.cs" />
-    <Compile Include="BTCeBtcRurAPI.cs" />
-    <Compile Include="BTCeBtcEurAPI.cs" />
-    <Compile Include="BTCeLtcBtcAPI.cs" />
-    <Compile Include="BTCeLtcRurAPI.cs" />
-    <Compile Include="BTCeNmcBtcAPI.cs" />
-    <Compile Include="BTCeNmcUsdAPI.cs" />
-    <Compile Include="BTCeNvcBtcAPI.cs" />
-    <Compile Include="BTCeNvcUsdAPI.cs" />
-    <Compile Include="BTCeUsdRurAPI.cs" />
-    <Compile Include="BTCeEurUsdAPI.cs" />
-    <Compile Include="BTCeTrcBtcAPI.cs" />
-    <Compile Include="BTCePpcBtcAPI.cs" />
-    <Compile Include="BTCePpcUsdAPI.cs" />
-    <Compile Include="BTCeFtcBtcAPI.cs" />
-    <Compile Include="BTCeXpmBtcAPI.cs" />
+    <Compile Include="Generate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Generate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GenerateAPIs.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GenerateAPIs.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VircurexAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Generate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Generate.cs</LastGenOutput>
+    </None>
+    <None Include="GenerateAPIs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GenerateAPIs.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -75,11 +75,10 @@
       <Name>CryptocoinTicker.Contract</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetFileName) ..\..\..\CryptocoinTicker.GUI\bin\$(ConfigurationName)
 copy $(TargetFileName).config ..\..\..\CryptocoinTicker.GUI\bin\$(ConfigurationName)</PostBuildEvent>

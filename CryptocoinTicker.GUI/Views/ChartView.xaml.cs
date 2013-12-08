@@ -28,6 +28,8 @@ namespace CryptocoinTicker.GUI.Views
 
         private System.Windows.Point clickPosition;
 
+        private int originalX;
+
         public ChartView()
         {
             this.Candles = new List<Candle>();
@@ -41,6 +43,7 @@ namespace CryptocoinTicker.GUI.Views
             this.MouseLeftButtonDown += new MouseButtonEventHandler(Control_MouseLeftButtonDown);
             this.MouseLeftButtonUp += new MouseButtonEventHandler(Control_MouseLeftButtonUp);
             this.MouseMove += new MouseEventHandler(Control_MouseMove);
+            this.MouseWheel +=ChartView_MouseWheel;
         }
 
         public bool IsLogarithmic { get; set; }
@@ -77,11 +80,16 @@ namespace CryptocoinTicker.GUI.Views
 
         public void Redraw()
         {
+            if (this.Candles.Count == 0)
+            {
+                return;
+            }
+
             var candles = this.Candles.Distinct().OrderByDescending(c => c.Date).Skip(X).Take(this.PeriodsToDisplay).ToList();
 
             MaxDate = candles.Max(c => c.Date);
             MinDate = MaxDate.AddSeconds(-1 * this.PeriodSize * this.PeriodsToDisplay);
-            candles = candles.Where(c => c.Date > MinDate).ToList();
+            candles = candles.Where(c => c.Date >= MinDate).ToList();
             MinChartValue = candles.Min(c => c.Low);
             MaxChartValue = candles.Max(c => c.High);
             MaxVolumeValue = candles.Max(c => c.Volume);
@@ -96,6 +104,7 @@ namespace CryptocoinTicker.GUI.Views
         private void DrawVolumeLegend()
         {
             var height = ((this.ChartCanvas.ActualHeight * 3) / 4) - 30;
+
             var line = new Line();
             line.Stroke = new SolidColorBrush(Colors.DimGray);
             line.X1 = this.ActualWidth - 50;
@@ -136,17 +145,19 @@ namespace CryptocoinTicker.GUI.Views
 
         private void DrawCandles(List<Candle> candles)
         {
-            if (candles.Count < 2)
+            if (candles.Count < 1)
             {
                 return;
             }
 
             var minHeight = ((this.ChartCanvas.ActualHeight * 3) / 4) - 30;
 
+            var width = (this.ActualWidth - 50) / this.PeriodsToDisplay;
+
             foreach (var candle in candles)
             {
                 var x = (candle.Date.Subtract(this.MinDate).TotalSeconds / this.PeriodSize)
-                        * ((this.ActualWidth - 50) / this.PeriodsToDisplay);
+                        * ((this.ActualWidth - 50 - (width / 2)) / this.PeriodsToDisplay);
 
                 Brush brush;
 
@@ -171,33 +182,52 @@ namespace CryptocoinTicker.GUI.Views
                 this.ChartCanvas.Children.Add(line);
 
                 var rect = new Rectangle();
-                rect.Width = 5;
-                rect.Height = Math.Max((minHeight * Convert.ToDouble(Math.Abs(candle.Open - candle.Close)))
-                              / (Convert.ToDouble(MaxChartValue - MinChartValue)), 1);
+                rect.Width = width - 2;
+                rect.Height =
+                    Math.Max(
+                        (minHeight * Convert.ToDouble(Math.Abs(candle.Open - candle.Close)))
+                        / Convert.ToDouble(MaxChartValue - MinChartValue),
+                        1);
                 rect.SnapsToDevicePixels = true;
                 rect.Stroke = brush;
                 rect.Fill = brush;
 
+                rect.ToolTip = string.Format(
+                    "Open: {0}\r\nClose: {1}\r\nHigh: {2}\r\nLow: {3}\r\nDate: {4}",
+                    candle.Open,
+                    candle.Close,
+                    candle.High,
+                    candle.Low,
+                    candle.Date);
+
                 this.ChartCanvas.Children.Add(rect);
                 Canvas.SetTop(rect, this.GetAbsoluteHeight(minHeight, Math.Max(candle.Open, candle.Close)));
-                Canvas.SetLeft(rect, x - 2.5);
+                Canvas.SetLeft(rect, x - (width / 2));
 
                 //draw volume
                 rect = new Rectangle();
-                rect.Width = 5;
+                rect.Width = width - 2;
                 rect.Height = (this.ActualHeight - minHeight - 30) * Convert.ToDouble(candle.Volume / this.MaxVolumeValue);
                 rect.SnapsToDevicePixels = true;
                 rect.Stroke = brush;
                 rect.Fill = brush;
+
+                rect.ToolTip = string.Format("Volume: {0}\r\nDate: {1}", candle.Volume, candle.Date);
+
                 this.ChartCanvas.Children.Add(rect);
                 Canvas.SetTop(rect, this.ActualHeight - rect.Height - 2);
-                Canvas.SetLeft(rect, x - 2.5);
+                Canvas.SetLeft(rect, x - (width / 2));
             }
         }
 
         private double GetAbsoluteHeight(double minHeight, decimal val)
         {
-            return minHeight - ((minHeight * Convert.ToDouble(val - this.MinChartValue)) / Convert.ToDouble(this.MaxChartValue - this.MinChartValue));
+            if (this.MaxChartValue == this.MinChartValue)
+            {
+                return minHeight;
+            }
+
+            return minHeight - ((minHeight * (Convert.ToDouble(val - this.MinChartValue))) / (Convert.ToDouble(this.MaxChartValue - this.MinChartValue)));
         }
 
         public void Clear()
@@ -251,6 +281,8 @@ namespace CryptocoinTicker.GUI.Views
 
         private void DrawTimelineChart()
         {
+            var width = ((this.ActualWidth - 50) / this.PeriodsToDisplay);
+
             var line = new Line();
             line.Stroke = new SolidColorBrush(Colors.DimGray);
             line.X1 = 0;
@@ -262,11 +294,11 @@ namespace CryptocoinTicker.GUI.Views
 
             this.ChartCanvas.Children.Add(line);
 
-            for (int i = 0; i < this.PeriodsToDisplay / 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var vertLine = new Line();
                 vertLine.Stroke = line.Stroke;
-                vertLine.X1 = (10 * i * Convert.ToInt32(this.ChartCanvas.ActualWidth - 50)) / this.PeriodsToDisplay;
+                vertLine.X1 = (i * Convert.ToInt32(this.ChartCanvas.ActualWidth - 50 - (width / 2))) / 10.0;
                 vertLine.X2 = vertLine.X1;
                 vertLine.Y1 = line.Y1;
                 vertLine.Y2 = line.Y1 - 5;
@@ -276,7 +308,7 @@ namespace CryptocoinTicker.GUI.Views
                 this.ChartCanvas.Children.Add(vertLine);
 
                 var text = new TextBox();
-                text.Text = this.MinDate.AddSeconds(i * 10 * this.PeriodSize).ToString("HH:mm");
+                text.Text = this.FormatDate(this.MinDate.AddSeconds(i * (this.PeriodSize * this.PeriodsToDisplay / 10.0)));
                 text.Background = new SolidColorBrush(Colors.Black);
                 text.Foreground = new SolidColorBrush(Colors.LightBlue);
                 text.BorderThickness = new Thickness(0);
@@ -286,7 +318,7 @@ namespace CryptocoinTicker.GUI.Views
                 Canvas.SetLeft(text, vertLine.X1);
             }
         }
-
+        
         public void AddLine(string name, IEnumerable<Point> line)
         {
 
@@ -299,6 +331,12 @@ namespace CryptocoinTicker.GUI.Views
             {
                 this.Lines.Remove(name);
             }
+        }
+
+
+        private string FormatDate(DateTime date)
+        {
+            return date.ToString("dd.MM HH:mm");
         }
 
         private string FormatNumDigits(decimal number, int x)
@@ -328,37 +366,51 @@ namespace CryptocoinTicker.GUI.Views
         private void Control_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             isDragging = true;
-            var draggableControl = sender as UserControl;
+            
             clickPosition = e.GetPosition(this);
-            draggableControl.CaptureMouse();
+
+            originalX = this.X;
         }
 
         private void Control_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isDragging = false;
-            var draggable = sender as UserControl;
-            draggable.ReleaseMouseCapture();
+
             this.ChartCanvas.Children.Clear();
             this.Redraw();
         }
 
         private void Control_MouseMove(object sender, MouseEventArgs e)
         {
-            var draggableControl = sender as UserControl;
+            var width = (this.ActualWidth - 50) / this.PeriodsToDisplay;
 
-            if (isDragging && draggableControl != null)
+            if (isDragging)
             {
                 System.Windows.Point currentPosition = e.GetPosition(this.Parent as UIElement);
 
                 var relativeX = currentPosition.X - clickPosition.X;
                 var relativeY = currentPosition.Y - clickPosition.Y;
 
-                var relativeChange = this.PeriodsToDisplay * relativeX / (this.ActualWidth * 10);
+                var relativeChange = relativeX / width;
 
                 this.X = Math.Min(
                     this.Candles.Count - this.PeriodsToDisplay,
-                    Math.Max(0, Convert.ToInt32(this.X + relativeChange)));
+                    Math.Max(0, Convert.ToInt32(this.originalX + relativeChange)));
+
+                this.ChartCanvas.Children.Clear();
+                this.Redraw();
             }
+        }
+
+        private void ChartView_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            this.PeriodsToDisplay -= e.Delta / 10;
+
+            this.PeriodsToDisplay = Math.Min(200, Math.Max(10, this.PeriodsToDisplay));
+
+            this.ChartCanvas.Children.Clear();
+
+            this.Redraw();
         }
     }
 }
