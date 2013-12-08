@@ -7,9 +7,13 @@ Currently supports MtGox, BTCe, Bitstamp, Kraken and Vircurex.
 
 Features:
 
--Scrollable/Zoomable Candle chart for different period sizes
+- Scrollable/Zoomable Candle chart for different period sizes
 
--Market Depth
+- Market Depth
+
+Prerequisites:
+
+- .Net Framework 4.5
 
 [Download](https://github.com/Panaetius/CryptocoinTicker/raw/master/Binaries/0.1/CryptocoinTicker.v0.1.zip)
 
