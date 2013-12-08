@@ -67,7 +67,7 @@
                                                     <Expander IsExpanded="False" Background="Black" Foreground="LightBlue">
                                                         <Expander.Header>
                                                             <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="LightBlue" FontSize="22" VerticalAlignment="Bottom" />
+                                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="LightBlue" FontSize="12" VerticalAlignment="Bottom" />
                                                             </StackPanel>
                                                         </Expander.Header>
                                                         <ItemsPresenter />

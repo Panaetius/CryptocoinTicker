@@ -29,12 +29,12 @@ namespace CryptocoinTicker.BTCePlugins
 
         public async Task<IEnumerable<Trade>> GetTrades()
         {
-            return this.GetTrades("ltc_eur");
+            return await Task.Run(() => this.GetTrades("ltc_eur"));
         }
 
         public async Task<Depth> GetDepth()
         {
-            return this.GetDepth("ltc_eur");
+            return await Task.Run(() => this.GetDepth("ltc_eur"));
         }
     }
 }

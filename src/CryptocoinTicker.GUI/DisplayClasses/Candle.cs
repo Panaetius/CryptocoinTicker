@@ -15,5 +15,17 @@ namespace CryptocoinTicker.GUI.DisplayClasses
         public decimal Close { get; set; }
 
         public decimal Volume { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "Date: {0} High: {1} Low: {2} Open: {3} Close: {4} Volume: {5}",
+                Date,
+                High,
+                Low,
+                Open,
+                Close,
+                Volume);
+        }
     }
 }

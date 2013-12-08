@@ -5,14 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 using CryptocoinTicker.Contract;
 
 using Newtonsoft.Json.Linq;
 
-namespace CryptocoinTicker.VircurexPlugins
+namespace CryptocoinTicker.KrakenPlugins
 {
-    public class VircurexAPI
+    public class KrakenAPI
     {
         private static Configuration config;
 
@@ -29,7 +31,7 @@ namespace CryptocoinTicker.VircurexPlugins
                         return loadedAssemblies.FirstOrDefault(asm => asm.FullName == args.Name);
                     };
 
-                    var assembly = Assembly.GetAssembly(typeof(VircurexAPI));
+                    var assembly = Assembly.GetAssembly(typeof(KrakenAPI));
                     var directory = Path.GetDirectoryName(assembly.CodeBase);
                     var filename = Path.GetFileName(assembly.CodeBase);
                     var assemblyPath = Path.Combine(directory, filename);
@@ -42,13 +44,11 @@ namespace CryptocoinTicker.VircurexPlugins
 
         public IEnumerable<Trade> GetTrades(string fromCurrency, string toCurrency)
         {
-            var querystring = string.Format("base={0}&alt={1}", fromCurrency, toCurrency);
-
-            var result = this.WebServiceCall("trades", querystring);
-
+            var querystring = string.Format("?pair={0}{1}", fromCurrency, toCurrency);
+            
             var trades = new List<Trade>();
 
-            string filename = string.Format("Vircurex_{0}.txt", fromCurrency + toCurrency);
+            string filename = string.Format("Kraken_{0}r.txt", fromCurrency + toCurrency);
 
             if (File.Exists(filename))
             {
@@ -69,16 +69,33 @@ namespace CryptocoinTicker.VircurexPlugins
                     }).ToList();
             }
 
-            var tradeArray = (JArray)result["root"];
+            JObject result;
+
+            var lastTrade = trades.OrderByDescending(t => t.Date).FirstOrDefault();
+
+            if (lastTrade != null)
+            {
+                querystring += "&since=" + lastTrade.TransactionId;
+
+                result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value, querystring));
+            }
+            else
+            {
+                result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value, querystring));
+            }
+
+            var tradeArray = (JArray)result["root"]["result"].First.First;
+
+            var tid = result["root"]["result"]["last"].Value<string>();
 
             foreach (var tradeEntry in tradeArray)
             {
                 var trade = new Trade();
 
-                trade.Amount = tradeEntry["amount"].Value<decimal>();
-                trade.Price = tradeEntry["price"].Value<decimal>();
-                trade.TransactionId = tradeEntry["tid"].Value<string>();
-                trade.Date = UnixTimeStampToDateTime(tradeEntry["date"].Value<long>()).ToLocalTime();
+                trade.Amount = tradeEntry[1].Value<decimal>();
+                trade.Price = tradeEntry[0].Value<decimal>();
+                trade.TransactionId = tid;
+                trade.Date = UnixTimeStampToDateTime(Convert.ToInt64(tradeEntry[2].Value<double>())).ToLocalTime();
 
                 trades.Add(trade);
             }
@@ -98,39 +115,37 @@ namespace CryptocoinTicker.VircurexPlugins
 
         public Depth GetDepth(string fromCurrency, string toCurrency)
         {
-            var querystring = string.Format("base={0}&alt={1}", fromCurrency, toCurrency);
+            var querystring = string.Format("?pair={0}{1}", fromCurrency, toCurrency);
 
 
-            var result = this.WebServiceCall("orderbook", querystring);
+            var result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["DepthURL"].Value, querystring));
 
-            var asks = result["root"]["asks"] as JArray;
-            var bids = result["root"]["bids"] as JArray;
+            var asks = result["root"]["result"].First.First["asks"] as JArray;
+            var bids = result["root"]["result"].First.First["bids"] as JArray;
 
             return new Depth
-                            {
-                                Asks =
-                                    asks.Select(
-                                        a =>
-                                        new DepthItem
-                                            {
-                                                Amount = a[1].Value<decimal>(),
-                                                Price = a[0].Value<decimal>()
-                                            }),
-                                Bids =
-                                    bids.Select(
-                                        b =>
-                                        new DepthItem
-                                            {
-                                                Amount = b[1].Value<decimal>(),
-                                                Price = b[0].Value<decimal>()
-                                            })
-                            };
+            {
+                Asks =
+                    asks.Select(
+                        a =>
+                        new DepthItem
+                        {
+                            Amount = a[1].Value<decimal>(),
+                            Price = a[0].Value<decimal>()
+                        }),
+                Bids =
+                    bids.Select(
+                        b =>
+                        new DepthItem
+                        {
+                            Amount = b[1].Value<decimal>(),
+                            Price = b[0].Value<decimal>()
+                        })
+            };
         }
 
-        private JObject WebServiceCall(string command, string querystring)
+        private JObject WebServiceCall(string url)
         {
-            var url = string.Format(CurrentConfiguration.AppSettings.Settings["TradeUrl"].Value, command, querystring);
-
             var jsonString = new WebClient().DownloadString(url);
 
             return JObject.Parse("{\"root\": " + jsonString + "}");
@@ -143,6 +158,6 @@ namespace CryptocoinTicker.VircurexPlugins
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dtDateTime;
         }
+
     }
 }
-

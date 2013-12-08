@@ -132,7 +132,7 @@ namespace CryptocoinTicker.GUI.ViewModels
             {
                 return new List<Tuple<string, int>>
                            {
-                               new Tuple<string, int>("1 second", 1),
+                               //new Tuple<string, int>("1 second", 1),
                                new Tuple<string, int>("5 seconds", 5),
                                new Tuple<string, int>("10 seconds", 10),
                                new Tuple<string, int>("15 seconds", 15),

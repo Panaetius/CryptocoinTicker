@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 using CryptocoinTicker.Contract;
 
 using Newtonsoft.Json.Linq;
 
-namespace CryptocoinTicker.VircurexPlugins
+namespace CryptocoinTicker.BitstampPlugins
 {
-    public class VircurexAPI
+    [Export(typeof(ITickerApi))]
+    [ExportMetadata("Exchange", "Bitstamp")]
+    [ExportMetadata("Pair", "BTC/USD")]
+    public class BitstampAPI:ITickerApi
     {
         private static Configuration config;
 
@@ -29,7 +35,7 @@ namespace CryptocoinTicker.VircurexPlugins
                         return loadedAssemblies.FirstOrDefault(asm => asm.FullName == args.Name);
                     };
 
-                    var assembly = Assembly.GetAssembly(typeof(VircurexAPI));
+                    var assembly = Assembly.GetAssembly(typeof(BitstampAPI));
                     var directory = Path.GetDirectoryName(assembly.CodeBase);
                     var filename = Path.GetFileName(assembly.CodeBase);
                     var assemblyPath = Path.Combine(directory, filename);
@@ -40,15 +46,11 @@ namespace CryptocoinTicker.VircurexPlugins
             }
         }
 
-        public IEnumerable<Trade> GetTrades(string fromCurrency, string toCurrency)
+        public IEnumerable<Trade> GetTradesAsync()
         {
-            var querystring = string.Format("base={0}&alt={1}", fromCurrency, toCurrency);
-
-            var result = this.WebServiceCall("trades", querystring);
-
             var trades = new List<Trade>();
 
-            string filename = string.Format("Vircurex_{0}.txt", fromCurrency + toCurrency);
+            string filename = "Bitstamp";
 
             if (File.Exists(filename))
             {
@@ -69,6 +71,19 @@ namespace CryptocoinTicker.VircurexPlugins
                     }).ToList();
             }
 
+            JObject result;
+
+            var lastTrade = trades.OrderByDescending(t => t.Date).FirstOrDefault();
+
+            if (lastTrade != null && DateTime.Now.Subtract(lastTrade.Date).TotalSeconds < 60)
+            {
+                result = this.WebServiceCall(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value + "?time=minute");
+            }
+            else
+            {
+                result = this.WebServiceCall(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value);
+            }
+            
             var tradeArray = (JArray)result["root"];
 
             foreach (var tradeEntry in tradeArray)
@@ -96,41 +111,36 @@ namespace CryptocoinTicker.VircurexPlugins
             return trades;
         }
 
-        public Depth GetDepth(string fromCurrency, string toCurrency)
+        public Depth GetDepthAsync()
         {
-            var querystring = string.Format("base={0}&alt={1}", fromCurrency, toCurrency);
-
-
-            var result = this.WebServiceCall("orderbook", querystring);
+            var result = this.WebServiceCall(CurrentConfiguration.AppSettings.Settings["DepthUrl"].Value);
 
             var asks = result["root"]["asks"] as JArray;
             var bids = result["root"]["bids"] as JArray;
 
             return new Depth
-                            {
-                                Asks =
-                                    asks.Select(
-                                        a =>
-                                        new DepthItem
-                                            {
-                                                Amount = a[1].Value<decimal>(),
-                                                Price = a[0].Value<decimal>()
-                                            }),
-                                Bids =
-                                    bids.Select(
-                                        b =>
-                                        new DepthItem
-                                            {
-                                                Amount = b[1].Value<decimal>(),
-                                                Price = b[0].Value<decimal>()
-                                            })
-                            };
+            {
+                Asks =
+                    asks.Select(
+                        a =>
+                        new DepthItem
+                        {
+                            Amount = a[1].Value<decimal>(),
+                            Price = a[0].Value<decimal>()
+                        }).Where(a => a.Price > 0),
+                Bids =
+                    bids.Select(
+                        b =>
+                        new DepthItem
+                        {
+                            Amount = b[1].Value<decimal>(),
+                            Price = b[0].Value<decimal>()
+                        }).Where(b => b.Price > 0)
+            };
         }
 
-        private JObject WebServiceCall(string command, string querystring)
+        private JObject WebServiceCall(string url)
         {
-            var url = string.Format(CurrentConfiguration.AppSettings.Settings["TradeUrl"].Value, command, querystring);
-
             var jsonString = new WebClient().DownloadString(url);
 
             return JObject.Parse("{\"root\": " + jsonString + "}");
@@ -143,6 +153,15 @@ namespace CryptocoinTicker.VircurexPlugins
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dtDateTime;
         }
+
+        public Task<IEnumerable<Trade>> GetTrades()
+        {
+            return Task.Run(() => this.GetTradesAsync());
+        }
+
+        public Task<Depth> GetDepth()
+        {
+            return Task.Run(() => this.GetDepthAsync());
+        }
     }
 }
-
