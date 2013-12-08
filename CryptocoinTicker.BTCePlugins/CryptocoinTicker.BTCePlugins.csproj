@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="BTCeAPI.cs" />
     <Compile Include="BTCeLtcEurAPI.cs" />
+    <Compile Include="BTCeLtcUsdAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,7 +65,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetFileName) ..\..\..\CryptocoinTicker.GUI\bin\$(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetFileName) ..\..\..\CryptocoinTicker.GUI\bin\$(ConfigurationName)
+copy $(TargetFileName).config ..\..\..\CryptocoinTicker.GUI\bin\$(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

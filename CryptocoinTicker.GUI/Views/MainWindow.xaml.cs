@@ -10,6 +10,8 @@ namespace CryptocoinTicker.GUI.Views
         public MainWindow()
         {
             this.InitializeComponent();
+            this.ChartView.Content = new ChartView();
+            this.DepthView.Content = new DepthView();
         }
     }
 }

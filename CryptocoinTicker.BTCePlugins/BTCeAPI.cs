@@ -52,6 +52,27 @@ namespace CryptocoinTicker.BTCePlugins
 
             var trades = new List<Trade>();
 
+            string filename = string.Format("BTCe_{0}.txt", currencyPair);
+
+            if (File.Exists(filename))
+            {
+                var lines = File.ReadAllLines(filename);
+
+                trades = lines.Select(
+                    l =>
+                        {
+                            var splits = l.Split(';');
+                            return new Trade
+                                       {
+                                           Amount = decimal.Parse(splits[0]),
+                                           Date = DateTime.Parse(splits[1]),
+                                           Price = decimal.Parse(splits[2]),
+                                           TransactionId = splits[3],
+                                           Type = splits[4] == "Buy" ? TradeType.Buy : TradeType.Sell
+                                       };
+                        }).ToList();
+            }
+
             foreach (var trade in jsonArray)
             {
                 var parsedTrade = new Trade
@@ -65,6 +86,18 @@ namespace CryptocoinTicker.BTCePlugins
 
                 trades.Add(parsedTrade);
             }
+
+            trades = trades.Distinct().OrderBy(t => t.Date).ToList();
+
+            if (File.Exists(filename))
+            {
+                File.Delete(filename);
+            }
+
+            File.WriteAllLines(
+                filename,
+                trades.Select(
+                    t => string.Format("{0};{1};{2};{3};{4}", t.Amount, t.Date, t.Price, t.TransactionId, t.Type)));
 
             return trades;
         }

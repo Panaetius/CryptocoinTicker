@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 using CryptocoinTicker.BusinessLogic;
 using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
 using CryptocoinTicker.GUI.Helpers;
+using CryptocoinTicker.GUI.Views;
 
 namespace CryptocoinTicker.GUI.ViewModels
 {
-    public class MainWindowViewModel:ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
     {
         private TickerHost host;
 
@@ -22,10 +25,57 @@ namespace CryptocoinTicker.GUI.ViewModels
 
         private int periodSize = 900;
 
+        private IChartView chartView;
+
+        private DispatcherTimer timer = new DispatcherTimer();
+
+        private IDepthView depthView;
+
         public MainWindowViewModel()
         {
             this.host = new TickerHost();
             this.host.Setup();
+
+            timer.Interval = new TimeSpan(0, 0, this.UpdateInterval);
+            timer.Tick += TimerOnTick;
+        }
+
+        private void TimerOnTick(object sender, EventArgs eventArgs)
+        {
+            if (this.currenTickerApi == null)
+            {
+                return;
+            }
+
+            this.ChartView.Clear();
+
+            this.ChartView.PeriodSize = this.PeriodSize;
+            this.ChartView.PeriodsToDisplay = 100;
+
+            var trades = currenTickerApi.GetTrades();
+
+            var candles =
+                trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
+                    .Select(
+                        g =>
+                        new Candle
+                            {
+                                Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
+                                Close = g.Last().Price,
+                                Open = g.First().Price,
+                                High = g.Max(c => c.Price),
+                                Low = g.Min(c => c.Price),
+                                Volume = g.Sum(c => Math.Abs(c.Amount))
+                            });
+
+            foreach (var candle in candles)
+            {
+                this.ChartView.AddCandle(candle);
+            }
+
+            this.ChartView.Redraw();
+
+                    this.DepthView.SetDepth(this.currenTickerApi.GetDepth());
         }
 
         public List<CurrencyPair> CurrencyPairs
@@ -51,6 +101,10 @@ namespace CryptocoinTicker.GUI.ViewModels
                 this.selectedCurrencyPair = value;
 
                 currenTickerApi = host.GetTicker(value.ExchangeName, value.CurrencyPairName);
+
+                this.TimerOnTick(null, null);
+
+                timer.Start();
 
                 this.OnPropertyChanged("SelectedCurrencyPair");
             }
@@ -82,6 +136,12 @@ namespace CryptocoinTicker.GUI.ViewModels
             set
             {
                 this.updateInterval = value;
+
+                timer.Stop();
+                timer.Interval = new TimeSpan(0, 0, value);
+                this.TimerOnTick(null, null);
+                timer.Start();
+
                 this.OnPropertyChanged("UpdateInterval");
             }
         }
@@ -119,6 +179,32 @@ namespace CryptocoinTicker.GUI.ViewModels
             {
                 this.periodSize = value;
                 this.OnPropertyChanged("PeriodSize");
+            }
+        }
+
+        public IChartView ChartView
+        {
+            get
+            {
+                return this.chartView;
+            }
+            set
+            {
+                this.chartView = value;
+                this.OnPropertyChanged("ChartView");
+            }
+        }
+
+        public IDepthView DepthView
+        {
+            get
+            {
+                return this.depthView;
+            }
+            set
+            {
+                this.depthView = value;
+                this.OnPropertyChanged("DepthView");
             }
         }
     }
