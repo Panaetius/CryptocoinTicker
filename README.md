@@ -24,4 +24,5 @@ Prerequisites:
 Donations:
 
 LTC: LdhLdbbQLmdFXVguWB2LwPtSJENRrakvg3
+
 BTC: 1HjXChksfAWJQnMQ8ncbQgfxKxJRNCsWcN
