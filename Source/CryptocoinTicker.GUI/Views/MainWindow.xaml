@@ -102,7 +102,8 @@
                                   SelectedValuePath="Item2" SelectedValue="{Binding PeriodSize, Mode=TwoWay}"/>
                     </Grid>
                 </MenuItem>
-                <MenuItem Header="About" Name="AboutMenuItem"></MenuItem>
+                <MenuItem Header="About" Name="AboutMenuItem"/>
+                <MenuItem Header="{Binding ErrorMessage}" Visibility="{Binding ShowErrorMessage}" HorizontalAlignment="Right" Foreground="Red" IsEnabled="False"/>
             </Menu>
             <Grid>
                 <Grid.RowDefinitions>

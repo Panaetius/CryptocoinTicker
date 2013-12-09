@@ -33,6 +33,10 @@ namespace CryptocoinTicker.GUI.ViewModels
 
         private Depth depth;
 
+        private string errorMessage;
+
+        private bool showErrorMessage;
+
         public MainWindowViewModel()
         {
             this.host = new TickerHost();
@@ -48,6 +52,8 @@ namespace CryptocoinTicker.GUI.ViewModels
             {
                 return;
             }
+
+            this.ShowErrorMessage = false;
 
             timer.Stop();
 
@@ -71,25 +77,33 @@ namespace CryptocoinTicker.GUI.ViewModels
 
         private async Task<int> GetTickerData()
         {
-            var trades = await currenTickerApi.GetTrades();
+            try
+            {
+                var trades = await currenTickerApi.GetTrades();
 
-            var candles =
-                trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
-                    .Select(
-                        g =>
-                        new Candle
-                        {
-                            Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
-                            Close = g.Last().Price,
-                            Open = g.First().Price,
-                            High = g.Max(c => c.Price),
-                            Low = g.Min(c => c.Price),
-                            Volume = g.Sum(c => Math.Abs(c.Amount))
-                        });
+                var candles =
+                    trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
+                        .Select(
+                            g =>
+                            new Candle
+                                {
+                                    Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
+                                    Close = g.Last().Price,
+                                    Open = g.First().Price,
+                                    High = g.Max(c => c.Price),
+                                    Low = g.Min(c => c.Price),
+                                    Volume = g.Sum(c => Math.Abs(c.Amount))
+                                });
 
-            this.candles = candles;
+                this.candles = candles;
 
-            this.depth = await this.currenTickerApi.GetDepth();
+                this.depth = await this.currenTickerApi.GetDepth();
+            }
+            catch (Exception ex)
+            {
+                this.ErrorMessage = ex.Message;
+                this.ShowErrorMessage = true;
+            }
 
             return 0;
         }
@@ -221,6 +235,32 @@ namespace CryptocoinTicker.GUI.ViewModels
             {
                 this.depthView = value;
                 this.OnPropertyChanged("DepthView");
+            }
+        }
+
+        public string ErrorMessage
+        {
+            get
+            {
+                return this.errorMessage;
+            }
+            set
+            {
+                this.errorMessage = value;
+                this.OnPropertyChanged("ErrorMessage");
+            }
+        }
+
+        public bool ShowErrorMessage
+        {
+            get
+            {
+                return this.showErrorMessage;
+            }
+            set
+            {
+                this.showErrorMessage = value;
+                this.OnPropertyChanged("ShowErrorMessage");
             }
         }
     }

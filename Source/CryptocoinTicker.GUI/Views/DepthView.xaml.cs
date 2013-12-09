@@ -182,7 +182,7 @@ namespace CryptocoinTicker.GUI.Views
 
             this.DepthCanvas.Children.Add(line);
 
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var vertLine = new Line();
                 vertLine.X1 = 0;
