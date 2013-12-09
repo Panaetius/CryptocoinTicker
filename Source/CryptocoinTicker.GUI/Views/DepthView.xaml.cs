@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -28,6 +29,9 @@ namespace CryptocoinTicker.GUI.Views
         public DepthView()
         {
             InitializeComponent();
+
+            this.MouseLeave += DepthView_MouseLeave;
+            this.DepthCanvas.MouseMove += DepthView_MouseMove;
         }
 
         private Depth Depth { get; set; }
@@ -37,6 +41,10 @@ namespace CryptocoinTicker.GUI.Views
         private decimal MaxPrice { get; set; }
 
         private decimal MinPrice { get; set; }
+
+        private Polygon AsksPolygon { get; set; }
+
+        private Polygon BidsPolygon { get; set; }
 
         public void SetDepth(Depth depth)
         {
@@ -83,15 +91,15 @@ namespace CryptocoinTicker.GUI.Views
             points.Add(new Point(0, this.ActualHeight - 30));
             points.Add(new Point(this.ValueToX(bids.First().Price), this.ValueToY(0)));
 
-            var polygon = new Polygon();
-            polygon.Stroke = new SolidColorBrush(Colors.Red);
-            polygon.StrokeThickness = 1;
-            polygon.SnapsToDevicePixels = true;
-            polygon.Points = points;
-            polygon.FillRule = FillRule.Nonzero;
-            polygon.Fill = polygon.Stroke;
+            BidsPolygon = new Polygon();
+            BidsPolygon.Stroke = new SolidColorBrush(Colors.Red);
+            BidsPolygon.StrokeThickness = 1;
+            BidsPolygon.SnapsToDevicePixels = true;
+            BidsPolygon.Points = points;
+            BidsPolygon.FillRule = FillRule.Nonzero;
+            BidsPolygon.Fill = BidsPolygon.Stroke;
 
-            this.DepthCanvas.Children.Add(polygon);
+            this.DepthCanvas.Children.Add(BidsPolygon);
         }
 
         private void DrawAsks()
@@ -118,15 +126,15 @@ namespace CryptocoinTicker.GUI.Views
             points.Add(new Point(this.ActualWidth - 50, this.ActualHeight - 30));
             points.Add(new Point(this.ValueToX(asks.First().Price), this.ValueToY(0)));
 
-            var polygon = new Polygon();
-            polygon.Stroke = new SolidColorBrush(Colors.Green);
-            polygon.StrokeThickness = 1;
-            polygon.SnapsToDevicePixels = true;
-            polygon.Points = points;
-            polygon.FillRule = FillRule.EvenOdd;
-            polygon.Fill = polygon.Stroke;
+            AsksPolygon = new Polygon();
+            AsksPolygon.Stroke = new SolidColorBrush(Colors.Green);
+            AsksPolygon.StrokeThickness = 1;
+            AsksPolygon.SnapsToDevicePixels = true;
+            AsksPolygon.Points = points;
+            AsksPolygon.FillRule = FillRule.EvenOdd;
+            AsksPolygon.Fill = AsksPolygon.Stroke;
 
-            this.DepthCanvas.Children.Add(polygon);
+            this.DepthCanvas.Children.Add(AsksPolygon);
         }
 
         private void DrawXAxis()
@@ -240,6 +248,45 @@ namespace CryptocoinTicker.GUI.Views
 
             // Pad with zeros
             return asString.Insert(1, new String('0', x + 1 - asString.Length));
+        }
+
+        private string FormatNumDigits(double number, int x)
+        {
+            return this.FormatNumDigits(Convert.ToDecimal(number), x);
+        }
+
+        private void DepthView_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.InfoPopup.IsOpen = false;
+        }
+
+        private void DepthView_MouseMove(object sender, MouseEventArgs e)
+        {
+            var point = e.GetPosition(sender as Canvas);
+
+            if (this.AsksPolygon == null || this.BidsPolygon == null || point.X >= this.ActualWidth - 50 || point.Y >= this.ActualHeight - 30)
+            {
+                return;
+            }
+
+            if (!this.InfoPopup.IsOpen)
+            {
+                this.InfoPopup.IsOpen = true;
+            }
+
+            this.InfoPopup.HorizontalOffset = point.X + 20;
+            this.InfoPopup.VerticalOffset = point.Y;
+
+            this.Volume.Text = string.Format(
+                "Volume: {0}",
+                this.FormatNumDigits((1 - (point.Y / (this.ActualHeight - 30))) * Convert.ToDouble(this.MaxAmount), 6));
+
+            this.Price.Text = string.Format(
+                "Price: {0}",
+                FormatNumDigits(
+                    ((point.X / (this.ActualWidth - 50)) * Convert.ToDouble(this.MaxPrice - this.MinPrice))
+                    + Convert.ToDouble(this.MinPrice),
+                    6));
         }
     }
 }
