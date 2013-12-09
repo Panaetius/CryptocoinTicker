@@ -19,3 +19,10 @@ Prerequisites:
 
 
 ![Screenshot](https://raw.github.com/Panaetius/CryptocoinTicker/master/Files/Screenshot1.PNG)
+
+
+Donations:
+
+LTC: LdhLdbbQLmdFXVguWB2LwPtSJENRrakvg3
+
+BTC: 1HjXChksfAWJQnMQ8ncbQgfxKxJRNCsWcN
