@@ -37,49 +37,50 @@
                     <MenuItem.Resources>
                         <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
                     </MenuItem.Resources>
-
-                    <ListView DataContext="{StaticResource GroupedExchanges}"  ItemsSource="{Binding}" SelectedItem="{Binding DataContext.SelectedCurrencyPair, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" 
+                    <ScrollViewer MaxHeight="800">
+                        <ListView DataContext="{StaticResource GroupedExchanges}"  ItemsSource="{Binding}" SelectedItem="{Binding DataContext.SelectedCurrencyPair, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" 
                               Foreground="LightBlue" Background="Black" Padding="3" Width="200">
-                        <ListView.View>
-                            <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
-                                <GridViewColumn DisplayMemberBinding="{Binding CurrencyPairName}" />
-                            </GridView>
-                        </ListView.View>
-                        <ListView.ItemContainerStyle>
-                            <Style>
-                                <Style.Triggers>
-                                    <Trigger Property="Control.IsMouseOver" Value="True">
-                                        <Setter Property="Control.Background" Value="Transparent" />
-                                    </Trigger>
-                                    <Trigger Property="Control.IsFocused" Value="True">
-                                        <Setter Property="Control.Background" Value="Transparent"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.ContainerStyle>
-                                    <Style TargetType="{x:Type GroupItem}">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate>
-                                                    <Expander IsExpanded="False" Background="Black" Foreground="LightBlue">
-                                                        <Expander.Header>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="LightBlue" FontSize="12" VerticalAlignment="Bottom" />
-                                                            </StackPanel>
-                                                        </Expander.Header>
-                                                        <ItemsPresenter />
-                                                    </Expander>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.ContainerStyle>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                    </ListView>
+                            <ListView.View>
+                                <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
+                                    <GridViewColumn DisplayMemberBinding="{Binding CurrencyPairName}" />
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style>
+                                    <Style.Triggers>
+                                        <Trigger Property="Control.IsMouseOver" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent" />
+                                        </Trigger>
+                                        <Trigger Property="Control.IsFocused" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander IsExpanded="False" Background="Black" Foreground="LightBlue">
+                                                            <Expander.Header>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="LightBlue" FontSize="12" VerticalAlignment="Bottom" />
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter />
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+                        </ListView>
+                    </ScrollViewer>
                 </MenuItem>
                 <MenuItem Header="Settings" Background="Black" Foreground="LightBlue">
                     <MenuItem.Resources>

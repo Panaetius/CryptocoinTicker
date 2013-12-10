@@ -12,9 +12,9 @@ using CryptocoinTicker.Contract;
 
 using Newtonsoft.Json.Linq;
 
-namespace CryptocoinTicker.KrakenPlugins
+namespace CryptocoinTicker.CryptsyPlugins
 {
-    public class KrakenAPI
+    public class CryptsyAPI
     {
         private static Configuration config;
 
@@ -31,7 +31,7 @@ namespace CryptocoinTicker.KrakenPlugins
                         return loadedAssemblies.FirstOrDefault(asm => asm.FullName == args.Name);
                     };
 
-                    var assembly = Assembly.GetAssembly(typeof(KrakenAPI));
+                    var assembly = Assembly.GetAssembly(typeof(CryptsyAPI));
                     var directory = Path.GetDirectoryName(assembly.CodeBase);
                     var filename = Path.GetFileName(assembly.CodeBase);
                     var assemblyPath = Path.Combine(directory, filename);
@@ -42,13 +42,11 @@ namespace CryptocoinTicker.KrakenPlugins
             }
         }
 
-        public IEnumerable<Trade> GetTrades(string fromCurrency, string toCurrency)
+        public IEnumerable<Trade> GetTrades(string id)
         {
-            var querystring = string.Format("?pair={0}{1}", fromCurrency, toCurrency);
-            
             var trades = new List<Trade>();
 
-            string filename = string.Format("Kraken_{0}r.txt", fromCurrency + toCurrency);
+            string filename = string.Format("Cryptsy_{0}r.txt", id);
 
             if (File.Exists(filename))
             {
@@ -71,31 +69,19 @@ namespace CryptocoinTicker.KrakenPlugins
 
             JObject result;
 
-            var lastTrade = trades.OrderByDescending(t => t.Date).FirstOrDefault();
+            result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value, id));
 
-            if (lastTrade != null)
-            {
-                querystring += "&since=" + lastTrade.TransactionId;
 
-                result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value, querystring));
-            }
-            else
-            {
-                result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["TradesURL"].Value, querystring));
-            }
-
-            var tradeArray = (JArray)result["root"]["result"].First.First;
-
-            var tid = result["root"]["result"]["last"].Value<string>();
+            var tradeArray = (JArray)result["root"]["return"]["markets"].First.First["recenttrades"];
 
             foreach (var tradeEntry in tradeArray)
             {
                 var trade = new Trade();
 
-                trade.Amount = tradeEntry[1].Value<decimal>();
-                trade.Price = tradeEntry[0].Value<decimal>();
-                trade.TransactionId = tid;
-                trade.Date = UnixTimeStampToDateTime(Convert.ToInt64(tradeEntry[2].Value<double>())).ToLocalTime();
+                trade.Amount = tradeEntry["quantity"].Value<decimal>();
+                trade.Price = tradeEntry["price"].Value<decimal>();
+                trade.TransactionId = tradeEntry["id"].Value<string>();
+                trade.Date = DateTime.Parse(tradeEntry["time"].Value<string>());
 
                 trades.Add(trade);
             }
@@ -113,15 +99,12 @@ namespace CryptocoinTicker.KrakenPlugins
             return trades;
         }
 
-        public Depth GetDepth(string fromCurrency, string toCurrency)
+        public Depth GetDepth(string id)
         {
-            var querystring = string.Format("?pair={0}{1}", fromCurrency, toCurrency);
+            var result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["DepthURL"].Value, id));
 
-
-            var result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["DepthURL"].Value, querystring));
-
-            var asks = result["root"]["result"].First.First["asks"] as JArray;
-            var bids = result["root"]["result"].First.First["bids"] as JArray;
+            var asks = result["root"]["return"].First.First["buyorders"] as JArray;
+            var bids = result["root"]["return"].First.First["sellorders"] as JArray;
 
             return new Depth
             {
@@ -130,16 +113,16 @@ namespace CryptocoinTicker.KrakenPlugins
                         a =>
                         new DepthItem
                         {
-                            Amount = a[1].Value<decimal>(),
-                            Price = a[0].Value<decimal>()
+                            Amount = a["quantity"].Value<decimal>(),
+                            Price = a["price"].Value<decimal>()
                         }),
                 Bids =
                     bids.Select(
                         b =>
                         new DepthItem
                         {
-                            Amount = b[1].Value<decimal>(),
-                            Price = b[0].Value<decimal>()
+                            Amount = b["quantity"].Value<decimal>(),
+                            Price = b["price"].Value<decimal>()
                         })
             };
         }
@@ -149,14 +132,6 @@ namespace CryptocoinTicker.KrakenPlugins
             var jsonString = new WebClient().DownloadString(url);
 
             return JObject.Parse("{\"root\": " + jsonString + "}");
-        }
-
-        private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
         }
     }
 }

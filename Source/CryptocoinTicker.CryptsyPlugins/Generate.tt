@@ -1,0 +1,119 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="GenerateAPIs.tt" #>
+<#
+List<Tuple<string, string, string>> currencies = new List<Tuple<string, string, string>>{
+                            new Tuple<string,string,string>("ADT", "XPM", "113"),
+                            new Tuple<string,string,string>("ASC", "XPM", "112"),
+                            new Tuple<string,string,string>("CENT", "XPM", "118"),
+                            new Tuple<string,string,string>("COL", "XPM", "110"),
+                            new Tuple<string,string,string>("IFC", "XPM", "105"),
+                            new Tuple<string,string,string>("NET", "XPM", "104"),
+                            new Tuple<string,string,string>("TIX", "XPM", "103"),
+                            new Tuple<string,string,string>("ADT", "LTC", "94"),
+                            new Tuple<string,string,string>("ASC", "LTC", "111"),
+                            new Tuple<string,string,string>("CENT", "LTC", "97"),
+                            new Tuple<string,string,string>("CNC", "LTC", "17"),
+                            new Tuple<string,string,string>("COL", "LTC", "109"),
+                            new Tuple<string,string,string>("CPR", "LTC", "91"),
+                            new Tuple<string,string,string>("DBL", "LTC", "46"),
+                            new Tuple<string,string,string>("DGC", "LTC", "96"),
+                            new Tuple<string,string,string>("DVC", "LTC", "52"),
+                            new Tuple<string,string,string>("ELP", "LTC", "93"),
+                            new Tuple<string,string,string>("EZC", "LTC", "55"),
+                            new Tuple<string,string,string>("FLO", "LTC", "61"),
+                            new Tuple<string,string,string>("GLD", "LTC", "36"),
+                            new Tuple<string,string,string>("GME", "LTC", "84"),
+                            new Tuple<string,string,string>("IFC", "LTC", "60"),
+                            new Tuple<string,string,string>("JKC", "LTC", "35"),
+                            new Tuple<string,string,string>("MEC", "LTC", "100"),
+                            new Tuple<string,string,string>("MEM", "LTC", "56"),
+                            new Tuple<string,string,string>("MST", "LTC", "62"),
+                            new Tuple<string,string,string>("NET", "LTC", "108"),
+                            new Tuple<string,string,string>("PXC", "LTC", "101"),
+                            new Tuple<string,string,string>("RED", "LTC", "87"),
+                            new Tuple<string,string,string>("RYC", "LTC", "37"),
+                            new Tuple<string,string,string>("SXC", "LTC", "98"),
+                            new Tuple<string,string,string>("TIX", "LTC", "107"),
+                            new Tuple<string,string,string>("WDC", "LTC", "21"),
+                            new Tuple<string,string,string>("XPM", "LTC", "106"),
+                            new Tuple<string,string,string>("YAC", "LTC", "22"),
+                            new Tuple<string,string,string>("ALF", "BTC", "57"),
+                            new Tuple<string,string,string>("AMC", "BTC", "43"),
+                            new Tuple<string,string,string>("ANC", "BTC", "66"),
+                            new Tuple<string,string,string>("ARG", "BTC", "48"),
+                            new Tuple<string,string,string>("BQC", "BTC", "10"),
+                            new Tuple<string,string,string>("BTB", "BTC", "23"),
+                            new Tuple<string,string,string>("BTE", "BTC", "49"),
+                            new Tuple<string,string,string>("BTG", "BTC", "50"),
+                            new Tuple<string,string,string>("BUK", "BTC", "102"),
+                            new Tuple<string,string,string>("CAP", "BTC", "53"),
+                            new Tuple<string,string,string>("CGB", "BTC", "70"),
+                            new Tuple<string,string,string>("CLR", "BTC", "95"),
+                            new Tuple<string,string,string>("CMC", "BTC", "74"),
+                            new Tuple<string,string,string>("CRC", "BTC", "58"),
+                            new Tuple<string,string,string>("CSC", "BTC", "68"),
+                            new Tuple<string,string,string>("DGC", "BTC", "26"),
+                            new Tuple<string,string,string>("ELC", "BTC", "12"),
+                            new Tuple<string,string,string>("EMD", "BTC", "69"),
+                            new Tuple<string,string,string>("FRC", "BTC", "39"),
+                            new Tuple<string,string,string>("FRK", "BTC", "33"),
+                            new Tuple<string,string,string>("FST", "BTC", "44"),
+                            new Tuple<string,string,string>("FTC", "BTC", "5"),
+                            new Tuple<string,string,string>("GDC", "BTC", "82"),
+                            new Tuple<string,string,string>("GLC", "BTC", "76"),
+                            new Tuple<string,string,string>("GLD", "BTC", "30"),
+                            new Tuple<string,string,string>("GLX", "BTC", "78"),
+                            new Tuple<string,string,string>("HBN", "BTC", "80"),
+                            new Tuple<string,string,string>("IXC", "BTC", "38"),
+                            new Tuple<string,string,string>("KGC", "BTC", "65"),
+                            new Tuple<string,string,string>("LKY", "BTC", "34"),
+                            new Tuple<string,string,string>("LTC", "BTC", "3"),
+                            new Tuple<string,string,string>("MEC", "BTC", "45"),
+                            new Tuple<string,string,string>("MNC", "BTC", "7"),
+                            new Tuple<string,string,string>("NBL", "BTC", "32"),
+                            new Tuple<string,string,string>("NEC", "BTC", "90"),
+                            new Tuple<string,string,string>("NMC", "BTC", "29"),
+                            new Tuple<string,string,string>("NRB", "BTC", "54"),
+                            new Tuple<string,string,string>("NVC", "BTC", "13"),
+                            new Tuple<string,string,string>("PHS", "BTC", "86"),
+                            new Tuple<string,string,string>("Points", "BTC", "120"),
+                            new Tuple<string,string,string>("PPC", "BTC", "28"),
+                            new Tuple<string,string,string>("PTS", "BTC", "119"),
+                            new Tuple<string,string,string>("PXC", "BTC", "31"),
+                            new Tuple<string,string,string>("PYC", "BTC", "92"),
+                            new Tuple<string,string,string>("QRK", "BTC", "71"),
+                            new Tuple<string,string,string>("SBC", "BTC", "51"),
+                            new Tuple<string,string,string>("SPT", "BTC", "81"),
+                            new Tuple<string,string,string>("SRC", "BTC", "88"),
+                            new Tuple<string,string,string>("TAG", "BTC", "117"),
+                            new Tuple<string,string,string>("TEK", "BTC", "114"),
+                            new Tuple<string,string,string>("TRC", "BTC", "27"),
+                            new Tuple<string,string,string>("WDC", "BTC", "14"),
+                            new Tuple<string,string,string>("XJO", "BTC", "115"),
+                            new Tuple<string,string,string>("XPM", "BTC", "63"),
+                            new Tuple<string,string,string>("YAC", "BTC", "11"),
+                            new Tuple<string,string,string>("ZET", "BTC", "85"),
+};
+
+                            #>
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Threading.Tasks;
+
+using CryptocoinTicker.Contract;
+
+using CryptocoinTicker.CryptsyPlugins;
+
+namespace CryptocoinTicker.CryptsyPlugins
+{
+                            <#
+foreach(Tuple<string,string, string> pair in currencies){
+        GenerateAPI(pair.Item1, pair.Item2, pair.Item3);
+        
+  }
+  #>
+  }
