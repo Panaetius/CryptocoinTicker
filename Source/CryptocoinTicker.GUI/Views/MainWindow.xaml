@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:CryptocoinTicker.GUI.ViewModels"
         xmlns:views="clr-namespace:CryptocoinTicker.GUI.Views"
-        Title="MainWindow" Height="768" Width="1280" Icon="../icon.ico">
+        Title="CryptocoinTicker" Height="768" Width="1280" Icon="../icon.ico">
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>
