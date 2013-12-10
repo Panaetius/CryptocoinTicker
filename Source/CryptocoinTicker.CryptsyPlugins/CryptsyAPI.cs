@@ -103,8 +103,8 @@ namespace CryptocoinTicker.CryptsyPlugins
         {
             var result = this.WebServiceCall(string.Format(CurrentConfiguration.AppSettings.Settings["DepthURL"].Value, id));
 
-            var asks = result["root"]["return"].First.First["buyorders"] as JArray;
-            var bids = result["root"]["return"].First.First["sellorders"] as JArray;
+            var asks = result["root"]["return"].First.First["sellorders"] as JArray;
+            var bids = result["root"]["return"].First.First["buyorders"] as JArray;
 
             return new Depth
             {

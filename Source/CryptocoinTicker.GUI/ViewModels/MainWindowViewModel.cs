@@ -42,6 +42,9 @@ namespace CryptocoinTicker.GUI.ViewModels
             this.host = new TickerHost();
             this.host.Setup();
 
+            this.candles = new List<Candle>();
+            this.depth = new Depth{Asks = new List<DepthItem>(), Bids = new List<DepthItem>() };
+
             timer.Interval = new TimeSpan(0, 0, this.UpdateInterval);
             timer.Tick += TimerOnTick;
         }

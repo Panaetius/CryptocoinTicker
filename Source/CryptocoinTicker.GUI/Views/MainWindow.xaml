@@ -37,7 +37,7 @@
                     <MenuItem.Resources>
                         <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
                     </MenuItem.Resources>
-                    <ScrollViewer MaxHeight="800">
+                    <ScrollViewer MaxHeight="600">
                         <ListView DataContext="{StaticResource GroupedExchanges}"  ItemsSource="{Binding}" SelectedItem="{Binding DataContext.SelectedCurrencyPair, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" 
                               Foreground="LightBlue" Background="Black" Padding="3" Width="200">
                             <ListView.View>

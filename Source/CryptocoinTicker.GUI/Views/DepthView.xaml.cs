@@ -52,11 +52,21 @@ namespace CryptocoinTicker.GUI.Views
 
             this.Depth = depth;
 
+            if (!this.Depth.Asks.Any() || !this.Depth.Bids.Any())
+            {
+                return;
+            }
+
             this.MaxAmount = Math.Max(this.Depth.Asks.Sum(a => a.Amount), this.Depth.Bids.Sum(b => b.Amount));
 
             this.MaxPrice = this.Depth.Asks.Max(a => a.Price);
 
             this.MinPrice = this.Depth.Bids.Min(b => b.Price);
+
+            if (this.MaxPrice == this.MinPrice)
+            {
+                return;
+            }
 
             this.DrawXAxis();
 
