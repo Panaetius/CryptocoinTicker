@@ -43,7 +43,15 @@ namespace CryptocoinTicker.GUI.Views
             this.MouseLeftButtonDown += new MouseButtonEventHandler(Control_MouseLeftButtonDown);
             this.MouseLeftButtonUp += new MouseButtonEventHandler(Control_MouseLeftButtonUp);
             this.MouseMove += new MouseEventHandler(Control_MouseMove);
-            this.MouseWheel +=ChartView_MouseWheel;
+            this.MouseWheel += ChartView_MouseWheel;
+        }
+
+        public string ChartName
+        {
+            get
+            {
+                return "Candle";
+            }
         }
 
         public bool IsLogarithmic { get; set; }
@@ -318,7 +326,7 @@ namespace CryptocoinTicker.GUI.Views
                 Canvas.SetLeft(text, vertLine.X1);
             }
         }
-        
+
         public void AddLine(string name, IEnumerable<Point> line)
         {
 
@@ -366,7 +374,7 @@ namespace CryptocoinTicker.GUI.Views
         private void Control_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             isDragging = true;
-            
+
             clickPosition = e.GetPosition(this);
 
             originalX = this.X;

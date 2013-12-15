@@ -5,6 +5,7 @@ namespace CryptocoinTicker.GUI.DisplayClasses
 {
     public interface IChartView
     {
+        string ChartName { get; }
         bool IsLogarithmic { get; set; }
 
         int PeriodSize { get; set; }

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:CryptocoinTicker.GUI.ViewModels"
         xmlns:views="clr-namespace:CryptocoinTicker.GUI.Views"
-        Title="CryptocoinTicker" Height="768" Width="1280" Icon="../icon.ico">
+        xmlns:displayClasses="clr-namespace:CryptocoinTicker.GUI.DisplayClasses"
+        Title="{Binding WindowTitle}" Height="768" Width="1280" Icon="../icon.ico">
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>
@@ -25,6 +26,9 @@
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type views:DepthView}">
                         <views:DepthView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type views:PointAndFigureChart}">
+                        <views:PointAndFigureChart/>
                     </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -101,6 +105,32 @@
                         <Label Grid.Column="0" Grid.Row="1" Content="Period Size" Foreground="LightBlue"/>
                         <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding PeriodSizes}" DisplayMemberPath="Item1" 
                                   SelectedValuePath="Item2" SelectedValue="{Binding PeriodSize, Mode=TwoWay}"/>
+                    </Grid>
+                </MenuItem>
+                <MenuItem Header="Chart">
+                    <MenuItem.Resources>
+                        <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
+                    </MenuItem.Resources>
+                    <Grid>
+                        <ListView Name="ChartSelection" ItemsSource="{Binding ChartViews}" SelectedItem="{Binding ChartView, Mode=TwoWay}" Foreground="LightBlue" Background="Black" Padding="3" Width="200">
+                            <ListView.View>
+                                <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
+                                    <GridViewColumn DisplayMemberBinding="{Binding ChartName}" />
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style>
+                                    <Style.Triggers>
+                                        <Trigger Property="Control.IsMouseOver" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent" />
+                                        </Trigger>
+                                        <Trigger Property="Control.IsFocused" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Grid>
                 </MenuItem>
                 <MenuItem Header="About" Name="AboutMenuItem"/>

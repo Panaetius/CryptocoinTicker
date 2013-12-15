@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -8,6 +9,7 @@ using CryptocoinTicker.BusinessLogic;
 using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
 using CryptocoinTicker.GUI.Helpers;
+using CryptocoinTicker.GUI.Views;
 
 namespace CryptocoinTicker.GUI.ViewModels
 {
@@ -37,8 +39,15 @@ namespace CryptocoinTicker.GUI.ViewModels
 
         private bool showErrorMessage;
 
+        private string windowTitle;
+
         public MainWindowViewModel()
         {
+            this.ChartViews = new ObservableCollection<IChartView>();
+
+            this.ChartViews.Add(new ChartView());
+            this.ChartViews.Add(new PointAndFigureChart());
+
             this.host = new TickerHost();
             this.host.Setup();
 
@@ -48,6 +57,8 @@ namespace CryptocoinTicker.GUI.ViewModels
             timer.Interval = new TimeSpan(0, 0, this.UpdateInterval);
             timer.Tick += TimerOnTick;
         }
+
+        public ObservableCollection<IChartView> ChartViews { get; set; }
 
         private async void TimerOnTick(object sender, EventArgs eventArgs)
         {
@@ -132,6 +143,8 @@ namespace CryptocoinTicker.GUI.ViewModels
             set
             {
                 this.selectedCurrencyPair = value;
+
+                this.WindowTitle = value.ExchangeName + " - " + value.CurrencyPairName;
 
                 this.ChartView.PeriodsToDisplay = 100;
 
@@ -224,6 +237,7 @@ namespace CryptocoinTicker.GUI.ViewModels
             set
             {
                 this.chartView = value;
+                this.ChartView.PeriodsToDisplay = 100;
                 this.OnPropertyChanged("ChartView");
             }
         }
@@ -264,6 +278,19 @@ namespace CryptocoinTicker.GUI.ViewModels
             {
                 this.showErrorMessage = value;
                 this.OnPropertyChanged("ShowErrorMessage");
+            }
+        }
+
+        public string WindowTitle
+        {
+            get
+            {
+                return "CryptocoinTicker - " + this.windowTitle;
+            }
+            set
+            {
+                this.windowTitle = value;
+                this.OnPropertyChanged("WindowTitle");
             }
         }
     }

@@ -1,5 +1,8 @@
-﻿using System.Reflection;
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Windows;
+
+using CryptocoinTicker.GUI.DisplayClasses;
 
 namespace CryptocoinTicker.GUI.Views
 {
