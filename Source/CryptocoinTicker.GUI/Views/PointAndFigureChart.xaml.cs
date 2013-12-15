@@ -107,13 +107,16 @@ namespace CryptocoinTicker.GUI.Views
 
             BoxSize = (MaxChartValue - MinChartValue) / 20;
 
+            MinChartValue = Math.Round(MinChartValue / BoxSize, 0) * BoxSize;
+            MaxChartValue = Math.Round(MaxChartValue / BoxSize, 0) * BoxSize;
+
             var firstCandle = candles.First();
 
             candles = candles.Skip(1).ToList();
 
             var boxes = new List<Box>();
 
-            var lastBox = new Box(Math.Round(firstCandle.Close, 1), 0, false);
+            var lastBox = new Box(Math.Round(firstCandle.Close / BoxSize, 0) * BoxSize, 0, false);
 
             boxes.Add(lastBox);
 
@@ -125,7 +128,7 @@ namespace CryptocoinTicker.GUI.Views
                     {
                         for (decimal i = lastBox.Price; i < Math.Round(candle.High, 1); i+=BoxSize)
                         {
-                            lastBox = new Box(Math.Round(i, 1), lastBox.Column, true);
+                            lastBox = new Box(Math.Round(i / BoxSize, 0) * BoxSize, lastBox.Column, true);
 
                             boxes.Add(lastBox);
                         }
@@ -136,7 +139,7 @@ namespace CryptocoinTicker.GUI.Views
                         var col = lastBox.Column + 1;
                         for (decimal i = lastBox.Price - BoxSize; i > Math.Round(candle.Low, 1); i -= BoxSize)
                         {
-                            lastBox = new Box(Math.Round(i, 1), col, false);
+                            lastBox = new Box(Math.Round(i/ BoxSize, 0) * BoxSize, col, false);
 
                             boxes.Add(lastBox);
                         }
@@ -148,7 +151,7 @@ namespace CryptocoinTicker.GUI.Views
                     {
                         for (decimal i = lastBox.Price; i > Math.Round(candle.Low, 1); i -= BoxSize)
                         {
-                            lastBox = new Box(Math.Round(i, 1), lastBox.Column, false);
+                            lastBox = new Box(Math.Round(i / BoxSize, 0) * BoxSize, lastBox.Column, false);
 
                             boxes.Add(lastBox);
                         }
@@ -159,7 +162,7 @@ namespace CryptocoinTicker.GUI.Views
                         var col = lastBox.Column + 1;
                         for (decimal i = lastBox.Price + BoxSize; i < Math.Round(candle.High, 1); i += BoxSize)
                         {
-                            lastBox = new Box(Math.Round(i, 1), col, true);
+                            lastBox = new Box(Math.Round(i / BoxSize, 0) * BoxSize, col, true);
 
                             boxes.Add(lastBox);
                         }
@@ -168,7 +171,8 @@ namespace CryptocoinTicker.GUI.Views
             }
 
             var colums = boxes.Max(b => b.Column);
-            var size = AreaWidth / PeriodsToDisplay;
+            var width = AreaWidth / PeriodsToDisplay;
+            var height = AreaHeight / 20;
             boxes = boxes.Where(b => b.Column > (colums - 100)).ToList();
 
             this.DrawYLegendChart();
@@ -182,20 +186,20 @@ namespace CryptocoinTicker.GUI.Views
                 if (box.IsX)
                 {
                     var line = new Line();
-                    line.X1 = x + (size * 0.1);
-                    line.X2 = x + (size * 0.9);
-                    line.Y1 = y + (size * 0.1);
-                    line.Y2 = y + (size * 0.9);
+                    line.X1 = x + (width * 0.1);
+                    line.X2 = x + (width * 0.9);
+                    line.Y1 = y - (height * 0.9);
+                    line.Y2 = y - (height * 0.1);
                     line.Stroke = new SolidColorBrush(Colors.Green);
                     line.SnapsToDevicePixels = true;
 
                     this.ChartCanvas.Children.Add(line);
 
                     line = new Line();
-                    line.X1 = x + (size * 0.1);
-                    line.X2 = x + (size * 0.9);
-                    line.Y1 = y + (size * 0.9);
-                    line.Y2 = y + (size * 0.1);
+                    line.X1 = x + (width * 0.1);
+                    line.X2 = x + (width * 0.9);
+                    line.Y1 = y - (height * 0.1);
+                    line.Y2 = y - (height * 0.9);
                     line.Stroke = new SolidColorBrush(Colors.Green);
                     line.SnapsToDevicePixels = true;
 
@@ -204,15 +208,15 @@ namespace CryptocoinTicker.GUI.Views
                 else
                 {
                     var ellipse = new Ellipse();
-                    ellipse.Height = size * 0.8;
-                    ellipse.Width = size * 0.8;
+                    ellipse.Height = height * 0.8;
+                    ellipse.Width = width * 0.8;
                     ellipse.Stroke = new SolidColorBrush(Colors.Red);
                     ellipse.SnapsToDevicePixels = true;
 
                     this.ChartCanvas.Children.Add(ellipse);
 
-                    Canvas.SetTop(ellipse, y + (size * 0.1));
-                    Canvas.SetLeft(ellipse, x + (size * 0.1));
+                    Canvas.SetTop(ellipse, y - height * 0.9);
+                    Canvas.SetLeft(ellipse, x + (width * 0.1));
                 }
             }
         }
@@ -245,16 +249,16 @@ namespace CryptocoinTicker.GUI.Views
             var height = this.AreaHeight;
             var line = new Line();
             line.Stroke = new SolidColorBrush(Colors.DimGray);
-            line.X1 = this.ActualWidth - 50;
+            line.X1 = this.AreaWidth;
             line.X2 = line.X1;
             line.Y1 = 0;
-            line.Y2 = height - 30;
+            line.Y2 = height;
             line.SnapsToDevicePixels = true;
             line.StrokeThickness = 1;
 
             this.ChartCanvas.Children.Add(line);
 
-            for (int i = 0; i < 19; i++)
+            for (int i = 0; i < 20; i++)
             {
                 var horLine = new Line();
                 horLine.Stroke = line.Stroke;
@@ -262,8 +266,8 @@ namespace CryptocoinTicker.GUI.Views
                 horLine.SnapsToDevicePixels = true;
 
                 horLine.X1 = 0;
-                horLine.X2 = this.ActualWidth - 45;
-                horLine.Y1 = height - (i * height / 20) - 30;
+                horLine.X2 = this.AreaWidth + 5;
+                horLine.Y1 = height - (i * height / 20);
                 horLine.Y2 = horLine.Y1;
 
                 this.ChartCanvas.Children.Add(horLine);
