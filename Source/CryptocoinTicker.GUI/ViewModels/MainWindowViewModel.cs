@@ -36,8 +36,6 @@ namespace CryptocoinTicker.GUI.ViewModels
 
         private string errorMessage;
 
-        private bool showErrorMessage;
-
         private string windowTitle;
 
         public MainWindowViewModel()

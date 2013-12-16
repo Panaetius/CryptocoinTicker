@@ -27,6 +27,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
 
             //We need to register our Module in MainRegion.
             this.regionViewRegistry.RegisterViewWithRegion("ChartRegion", typeof(PointAndFigureChart));
+            this.regionViewRegistry.RegisterViewWithRegion("ChartSettings", typeof(PointAndFigureChartSettings));
         }
 
         public void ShowView()
@@ -34,9 +35,12 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             // Initialize
             var regionManager = ServiceLocator.Current.GetInstance<IRegionManager>();
 
-            // Show Ribbon Tab
-            var moduleARibbonTab = new Uri("PointAndFigureChart", UriKind.Relative);
-            regionManager.RequestNavigate("ChartRegion", moduleARibbonTab);
+            // Show Chart
+            var chart = new Uri("PointAndFigureChart", UriKind.Relative);
+            regionManager.RequestNavigate("ChartRegion", chart);
+
+            var settings = new Uri("PointAndFigureChartSettings", UriKind.Relative);
+            regionManager.RequestNavigate("ChartSettings", settings);
         }
     }
 }

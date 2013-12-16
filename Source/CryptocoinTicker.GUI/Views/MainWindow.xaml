@@ -108,9 +108,19 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
                                     <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <ContentControl Grid.Row="0" Name="ChartSettings" regions:RegionManager.RegionName="ChartSettings"/>
-                                <ContentControl Grid.Row="1" Name="ApiSettings" regions:RegionManager.RegionName="ApiSettings"/>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <Label Content="Refresh Interval" Foreground="LightBlue"/>
+                                    <ComboBox ItemsSource="{Binding UpdateIntervals}" DisplayMemberPath="Item1" 
+                                  SelectedValuePath="Item2" SelectedValue="{Binding UpdateInterval, Mode=TwoWay}"/>
+                                </StackPanel>
+                                <GridSplitter Grid.Row="1" IsEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="1" ShowsPreview="True" Margin="2" />
+                                <ContentControl Grid.Row="2" Name="ChartSettings" regions:RegionManager.RegionName="ChartSettings"/>
+                                <GridSplitter Grid.Row="3" IsEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="1" ShowsPreview="True" Margin="2" />
+                                <ContentControl Grid.Row="4" Name="ApiSettings" regions:RegionManager.RegionName="ApiSettings"/>
                             </Grid>
                         </MenuItem.Header>
                     </MenuItem>
@@ -120,25 +130,6 @@
                         <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
                     </MenuItem.Resources>
                     <Grid>
-                        <!--<ListView Name="ChartSelection" ItemsSource="{Binding ChartViews}" SelectedItem="{Binding ChartView, Mode=TwoWay}" Foreground="LightBlue" Background="Black" Padding="3" Width="200">
-                            <ListView.View>
-                                <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
-                                    <GridViewColumn DisplayMemberBinding="{Binding ChartName}" />
-                                </GridView>
-                            </ListView.View>
-                            <ListView.ItemContainerStyle>
-                                <Style>
-                                    <Style.Triggers>
-                                        <Trigger Property="Control.IsMouseOver" Value="True">
-                                            <Setter Property="Control.Background" Value="Transparent" />
-                                        </Trigger>
-                                        <Trigger Property="Control.IsFocused" Value="True">
-                                            <Setter Property="Control.Background" Value="Transparent"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                        </ListView>-->
                         <ListView regions:RegionManager.RegionName="ChartMenu" Foreground="LightBlue" Background="Black" Padding="3" Width="200">
                             <ListView.View>
                                 <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
@@ -161,7 +152,7 @@
                     </Grid>
                 </MenuItem>
                 <MenuItem Header="About" Name="AboutMenuItem"/>
-                <MenuItem Header="{Binding ErrorMessage}" Visibility="{Binding ShowErrorMessage}" HorizontalAlignment="Right" Foreground="Red" IsEnabled="False"/>
+                <MenuItem Header="{Binding ErrorMessage}" HorizontalAlignment="Right" Foreground="Red" IsEnabled="False"/>
             </Menu>
             <Grid>
                 <Grid.RowDefinitions>
@@ -169,9 +160,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <!--<ContentControl Name="ChartView" Content="{Binding ChartView, Mode=TwoWay}" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ShowsPreview="True"/>
-                <ContentControl Name="DepthView" Content="{Binding DepthView, Mode=TwoWay}" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
                 <ContentControl Name="ChartView" regions:RegionManager.RegionName="ChartRegion" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ShowsPreview="True"/>
                 <ContentControl Name="TradeView" regions:RegionManager.RegionName="TradeRegion" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

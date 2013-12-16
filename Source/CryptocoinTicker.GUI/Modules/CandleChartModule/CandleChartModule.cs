@@ -37,9 +37,12 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule
             // Initialize
             var regionManager = ServiceLocator.Current.GetInstance<IRegionManager>();
 
-            // Show Ribbon Tab
-            var moduleARibbonTab = new Uri("CandleChart", UriKind.Relative);
-            regionManager.RequestNavigate("ChartRegion", moduleARibbonTab);
+            // Show Chart
+            var chart = new Uri("CandleChart", UriKind.Relative);
+            regionManager.RequestNavigate("ChartRegion", chart);
+
+            var settings = new Uri("CandleChartSettings", UriKind.Relative);
+            regionManager.RequestNavigate("ChartSettings", settings);
         }
     }
 }

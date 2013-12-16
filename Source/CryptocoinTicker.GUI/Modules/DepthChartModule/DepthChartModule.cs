@@ -27,6 +27,7 @@ namespace CryptocoinTicker.GUI.Modules.DepthChartModule
 
             //We need to register our Module in MainRegion.
             this.regionViewRegistry.RegisterViewWithRegion("ChartRegion", typeof(DepthChart));
+            this.regionViewRegistry.RegisterViewWithRegion("ChartSettings", typeof(DepthChartSettings));
         }
 
         public void ShowView()
@@ -34,9 +35,12 @@ namespace CryptocoinTicker.GUI.Modules.DepthChartModule
             // Initialize
             var regionManager = ServiceLocator.Current.GetInstance<IRegionManager>();
 
-            // Show Ribbon Tab
-            var moduleARibbonTab = new Uri("DepthChart", UriKind.Relative);
-            regionManager.RequestNavigate("ChartRegion", moduleARibbonTab);
+            // Show Chart
+            var chart = new Uri("DepthChart", UriKind.Relative);
+            regionManager.RequestNavigate("ChartRegion", chart);
+
+            var settings = new Uri("DepthChartSettings", UriKind.Relative);
+            regionManager.RequestNavigate("ChartSettings", settings);
         }
     }
 }
