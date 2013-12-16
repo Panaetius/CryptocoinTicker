@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 
 using CryptocoinTicker.GUI.DisplayClasses;
@@ -10,6 +11,8 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace CryptocoinTicker.GUI.Modules.CandleChartModule.ViewModels
 {
+    [Export(typeof(ViewModelBase))]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class CandleChartSettingsViewModel : ViewModelBase
     {
         private int periodSize;
@@ -48,8 +51,8 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule.ViewModels
                 this.periodSize = value;
 
                 ((IChartView)
-                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["ChartRegion"].ActiveViews.FirstOrDefault(
-                     )).PeriodSize = value;
+                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["ChartRegion"].ActiveViews.FirstOrDefault())
+                    .PeriodSize = value;
 
                 this.OnPropertyChanged("PeriodSize");
             }

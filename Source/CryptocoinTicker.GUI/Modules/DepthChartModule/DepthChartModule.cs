@@ -1,17 +1,21 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 
+using Microsoft.Practices.Prism.MefExtensions.Modularity;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
 
 namespace CryptocoinTicker.GUI.Modules.DepthChartModule
 {
+    [ModuleExport(typeof(DepthChartModule))]
     public class DepthChartModule : IModule
     {
         private readonly IRegionViewRegistry regionViewRegistry;
 
+        [ImportingConstructor]
         public DepthChartModule(IRegionViewRegistry registry)
         {
             this.regionViewRegistry = registry;

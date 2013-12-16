@@ -1,19 +1,23 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 
 using CryptocoinTicker.GUI.Modules.CandleChartModule.Views;
 
+using Microsoft.Practices.Prism.MefExtensions.Modularity;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
 
 namespace CryptocoinTicker.GUI.Modules.CandleChartModule
 {
+    [ModuleExport(typeof(CandleChartModule))]
     public class CandleChartModule : IModule
     {
         private readonly IRegionViewRegistry regionViewRegistry;
 
+        [ImportingConstructor]
         public CandleChartModule(IRegionViewRegistry registry)
         {
             this.regionViewRegistry = registry;

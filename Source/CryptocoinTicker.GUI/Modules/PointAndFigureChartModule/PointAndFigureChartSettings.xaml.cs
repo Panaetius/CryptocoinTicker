@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
     /// <summary>
     /// Interaction logic for PointAndFigureChartSettings.xaml
     /// </summary>
+    [Export]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public partial class PointAndFigureChartSettings : UserControl
     {
         public PointAndFigureChartSettings()

@@ -1,21 +1,22 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel.Composition.Hosting;
+using System.Windows;
 
 using CryptocoinTicker.GUI.Modules.CandleChartModule;
 using CryptocoinTicker.GUI.Modules.DepthChartModule;
 using CryptocoinTicker.GUI.Modules.PointAndFigureChartModule;
 using CryptocoinTicker.GUI.Views;
 
+using Microsoft.Practices.Prism.MefExtensions;
 using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Prism.UnityExtensions;
-using Microsoft.Practices.Unity;
 
 namespace CryptocoinTicker.GUI.Helpers
 {
-    public class ViewBootstrapper : UnityBootstrapper
+    public class ViewBootstrapper : MefBootstrapper
     {
         protected override DependencyObject CreateShell()
         {
-            return this.Container.Resolve<MainWindow>();
+            return this.Container.GetExportedValue<MainWindow>();
         }
 
         protected override void InitializeShell()
@@ -26,15 +27,21 @@ namespace CryptocoinTicker.GUI.Helpers
             App.Current.MainWindow.Show();
         }
 
-        protected override void ConfigureModuleCatalog()
+        protected override void ConfigureAggregateCatalog()
         {
-            base.ConfigureModuleCatalog();
+            base.ConfigureAggregateCatalog();
+            this.AggregateCatalog.Catalogs.Add(
+                new AssemblyCatalog(typeof(ViewBootstrapper).Assembly));
 
-            ModuleCatalog moduleCatalog = (ModuleCatalog)this.ModuleCatalog;
+            DirectoryCatalog catalog = new DirectoryCatalog("./");
+            this.AggregateCatalog.Catalogs.Add(catalog);
+        }
 
-            moduleCatalog.AddModule(typeof(CandleChartModule));
-            moduleCatalog.AddModule(typeof(DepthChartModule));
-            moduleCatalog.AddModule(typeof(PointAndFigureChartModule));
+        protected override IModuleCatalog CreateModuleCatalog()
+        {
+            // When using MEF, the existing Prism ModuleCatalog is still the place to 
+            // configure modules via configuration files.
+            return new ConfigurationModuleCatalog();
         }
     }
 }

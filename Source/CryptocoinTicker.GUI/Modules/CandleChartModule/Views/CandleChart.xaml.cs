@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +10,6 @@ using System.Windows.Shapes;
 
 using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
-using CryptocoinTicker.GUI.Helpers;
 
 using Point = CryptocoinTicker.GUI.DisplayClasses.Point;
 
@@ -18,6 +18,8 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule.Views
     /// <summary>
     /// Interaction logic for ChartView.xaml
     /// </summary>
+    [Export]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public partial class CandleChart : UserControl, IChartView
     {
         private bool isDragging;
@@ -28,11 +30,13 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule.Views
 
         public CandleChart()
         {
-            this.Trades = new List<Trade>();
+            this.Candles = new List<Candle>();
             this.Volumes = new List<VolumeBar>();
             this.Lines = new Dictionary<string, IEnumerable<Point>>();
 
-            this.PeriodSize = 100;
+            this.PeriodSize = 900;
+            this.PeriodsToDisplay = 100;
+
             this.X = 0;
 
             this.InitializeComponent();
@@ -69,39 +73,28 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule.Views
 
         private Dictionary<string, IEnumerable<Point>> Lines { get; set; }
 
-        private List<Trade> Trades { get; set; }
+        private List<Candle> Candles { get; set; }
 
         private List<VolumeBar> Volumes { get; set; }
 
         private int X { get; set; }
 
-        public void AddCandle(Trade trades)
+        public void AddCandle(Candle candle)
         {
-            if (!this.Trades.Contains(trades))
+            if (!this.Candles.Contains(candle))
             {
-                this.Trades.Add(trades);
+                this.Candles.Add(candle);
             }
         }
 
         public void Redraw()
         {
-            if (this.Trades.Count == 0)
+            if (this.Candles.Count == 0)
             {
                 return;
             }
 
-            var candles = this.Trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
-                        .Select(
-                            g =>
-                            new Candle
-                            {
-                                Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
-                                Close = g.Last().Price,
-                                Open = g.First().Price,
-                                High = g.Max(c => c.Price),
-                                Low = g.Min(c => c.Price),
-                                Volume = g.Sum(c => Math.Abs(c.Amount))
-                            }).Distinct().OrderByDescending(c => c.Date).Skip(this.X).Take(this.PeriodsToDisplay).ToList();
+            var candles = this.Candles.Distinct().OrderByDescending(c => c.Date).Skip(this.X).Take(this.PeriodsToDisplay).ToList();
 
             this.MaxDate = candles.Max(c => c.Date);
             this.MinDate = this.MaxDate.AddSeconds(-1 * this.PeriodSize * this.PeriodsToDisplay);
@@ -248,7 +241,7 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule.Views
 
         public void Clear()
         {
-            this.Trades.Clear();
+            this.Candles.Clear();
             this.Lines.Clear();
             this.Volumes.Clear();
             this.ChartCanvas.Children.Clear();
@@ -410,7 +403,7 @@ namespace CryptocoinTicker.GUI.Modules.CandleChartModule.Views
                 var relativeChange = relativeX / width;
 
                 this.X = Math.Min(
-                    this.Trades.Count - this.PeriodsToDisplay,
+                    this.Candles.Count - this.PeriodsToDisplay,
                     Math.Max(0, Convert.ToInt32(this.originalX + relativeChange)));
 
                 this.ChartCanvas.Children.Clear();

@@ -1,17 +1,21 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 
+using Microsoft.Practices.Prism.MefExtensions.Modularity;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
 
 namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
 {
+    [ModuleExport(typeof(PointAndFigureChartModule))]
     public class PointAndFigureChartModule : IModule
     {
         private readonly IRegionViewRegistry regionViewRegistry;
 
+        [ImportingConstructor]
         public PointAndFigureChartModule(IRegionViewRegistry registry)
         {
             this.regionViewRegistry = registry;

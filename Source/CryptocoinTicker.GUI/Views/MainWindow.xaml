@@ -111,16 +111,22 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                     <RowDefinition/>
+                                    <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal">
                                     <Label Content="Refresh Interval" Foreground="LightBlue"/>
                                     <ComboBox ItemsSource="{Binding UpdateIntervals}" DisplayMemberPath="Item1" 
                                   SelectedValuePath="Item2" SelectedValue="{Binding UpdateInterval, Mode=TwoWay}"/>
                                 </StackPanel>
-                                <GridSplitter Grid.Row="1" IsEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="1" ShowsPreview="True" Margin="2" />
-                                <ContentControl Grid.Row="2" Name="ChartSettings" regions:RegionManager.RegionName="ChartSettings"/>
-                                <GridSplitter Grid.Row="3" IsEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="1" ShowsPreview="True" Margin="2" />
-                                <ContentControl Grid.Row="4" Name="ApiSettings" regions:RegionManager.RegionName="ApiSettings"/>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <Label  Content="Period Size" Foreground="LightBlue"/>
+                                    <ComboBox ItemsSource="{Binding PeriodSizes}" DisplayMemberPath="Item1" 
+                                  SelectedValuePath="Item2" SelectedValue="{Binding PeriodSize, Mode=TwoWay}"/>
+                                </StackPanel>
+                                <GridSplitter Grid.Row="2" IsEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="1" ShowsPreview="True" Margin="2" />
+                                <ContentControl Grid.Row="3" Name="ChartSettings" regions:RegionManager.RegionName="ChartSettings"/>
+                                <GridSplitter Grid.Row="4" IsEnabled="False" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="1" ShowsPreview="True" Margin="2" />
+                                <ContentControl Grid.Row="5" Name="ApiSettings" regions:RegionManager.RegionName="ApiSettings"/>
                             </Grid>
                         </MenuItem.Header>
                     </MenuItem>

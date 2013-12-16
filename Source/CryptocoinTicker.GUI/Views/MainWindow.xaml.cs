@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
 using System.Reflection;
 using System.Windows;
 
@@ -9,6 +10,7 @@ namespace CryptocoinTicker.GUI.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    [Export]
     public partial class MainWindow : Window
     {
         public MainWindow()

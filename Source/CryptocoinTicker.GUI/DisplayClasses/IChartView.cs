@@ -15,7 +15,7 @@ namespace CryptocoinTicker.GUI.DisplayClasses
 
         int PeriodsToDisplay { get; set; }
 
-        void AddCandle(Trade trades);
+        void AddCandle(Candle candle);
 
         void AddLine(string name, IEnumerable<Point> line);
 

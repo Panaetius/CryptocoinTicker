@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,8 @@ namespace CryptocoinTicker.GUI.Modules.DepthChartModule
     /// <summary>
     /// Interaction logic for DepthView.xaml
     /// </summary>
+    [Export]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public partial class DepthChart : UserControl, IDepthView
     {
         public DepthChart()

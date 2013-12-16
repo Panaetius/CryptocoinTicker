@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,13 +18,16 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
     /// <summary>
     /// Interaction logic for PointAndFigureChart.xaml
     /// </summary>
+    [Export]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public partial class PointAndFigureChart : UserControl, IChartView
     {
         public PointAndFigureChart()
         {
             InitializeComponent();
 
-            this.Trades = new List<Trade>();
+            this.Candles = new List<Candle>();
+            this.PeriodSize = 900;
             this.PeriodsToDisplay = 100;
         }
 
@@ -39,7 +43,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
         public int PeriodSize { get; set; }
         public int PeriodsToDisplay { get; set; }
         
-        private List<Trade> Trades { get; set; }
+        private List<Candle> Candles { get; set; }
 
         private int X { get; set; }
 
@@ -69,11 +73,11 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             }
         }
 
-        public void AddCandle(Trade trades)
+        public void AddCandle(Candle candle)
         {
-            if (!this.Trades.Contains(trades))
+            if (!this.Candles.Contains(candle))
             {
-                this.Trades.Add(trades);
+                this.Candles.Add(candle);
             }
         }
 
@@ -89,23 +93,12 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
 
         public void Redraw()
         {
-            if (this.Trades.Count == 0)
+            if (this.Candles.Count == 0)
             {
                 return;
             }
 
-            var candles = this.Trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
-                        .Select(
-                            g =>
-                            new Candle
-                            {
-                                Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
-                                Close = g.Last().Price,
-                                Open = g.First().Price,
-                                High = g.Max(c => c.Price),
-                                Low = g.Min(c => c.Price),
-                                Volume = g.Sum(c => Math.Abs(c.Amount))
-                            }).Distinct().OrderBy(c => c.Date).ToList();
+            var candles = this.Candles.Distinct().OrderBy(c => c.Date).ToList();
 
             this.MinChartValue = candles.Min(c => c.Low);
             this.MaxChartValue = candles.Max(c => c.High);
@@ -245,7 +238,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
 
         public void Clear()
         {
-            this.Trades.Clear();
+            this.Candles.Clear();
             this.ChartCanvas.Children.Clear();
         }
 
