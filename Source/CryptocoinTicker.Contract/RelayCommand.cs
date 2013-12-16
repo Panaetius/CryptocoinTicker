@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace CryptocoinTicker.GUI.Helpers
+namespace CryptocoinTicker.Contract
 {
     public class RelayCommand : ICommand
     {
@@ -23,7 +23,7 @@ namespace CryptocoinTicker.GUI.Helpers
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
             if (execute == null) throw new ArgumentNullException("execute");
-            _execute = execute; _canExecute = canExecute;
+            this._execute = execute; this._canExecute = canExecute;
         }
         #endregion
         // Constructors 
@@ -32,7 +32,7 @@ namespace CryptocoinTicker.GUI.Helpers
         [DebuggerStepThrough]
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute(parameter);
+            return this._canExecute == null ? true : this._canExecute(parameter);
         }
 
         public event EventHandler CanExecuteChanged
@@ -49,7 +49,7 @@ namespace CryptocoinTicker.GUI.Helpers
 
         public void Execute(object parameter)
         {
-            _execute(parameter);
+            this._execute(parameter);
         }
         #endregion // ICommand Members
     }

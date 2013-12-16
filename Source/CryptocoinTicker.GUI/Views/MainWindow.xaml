@@ -145,9 +145,13 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ContentControl Name="ChartView" regions:RegionManager.RegionName="ChartRegion" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                <Border Grid.Row="0" Background="Black">
+                    <ContentControl Name="ChartView" regions:RegionManager.RegionName="ChartRegion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                </Border>
                 <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ShowsPreview="True"/>
-                <ContentControl Name="TradeView" regions:RegionManager.RegionName="TradeRegion" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                <Border Background="Black" Grid.Row="2">
+                    <ContentControl Name="TradeView" regions:RegionManager.RegionName="TradeRegion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black"/>
+                </Border>
             </Grid>
         </DockPanel>
     </Grid>

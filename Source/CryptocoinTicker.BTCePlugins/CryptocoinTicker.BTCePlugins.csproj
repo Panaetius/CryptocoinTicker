@@ -68,32 +68,46 @@
   <ItemGroup>
     <Compile Include="BTCeAPI.cs" />
     <Compile Include="BTCeApiModule.cs" />
-    <Compile Include="BTCeLtcEurAPI.cs" />
-    <Compile Include="BTCeLtcUsdAPI.cs" />
-    <Compile Include="BTCeBtcUsdAPI.cs" />
-    <Compile Include="BTCeBtcRurAPI.cs" />
-    <Compile Include="BTCeBtcEurAPI.cs" />
-    <Compile Include="BTCeLtcBtcAPI.cs" />
-    <Compile Include="BTCeLtcRurAPI.cs" />
-    <Compile Include="BTCeNmcBtcAPI.cs" />
-    <Compile Include="BTCeNmcUsdAPI.cs" />
-    <Compile Include="BTCeNvcBtcAPI.cs" />
-    <Compile Include="BTCeNvcUsdAPI.cs" />
-    <Compile Include="BTCeUsdRurAPI.cs" />
-    <Compile Include="BTCeEurUsdAPI.cs" />
-    <Compile Include="BTCeTrcBtcAPI.cs" />
-    <Compile Include="BTCePpcBtcAPI.cs" />
-    <Compile Include="BTCePpcUsdAPI.cs" />
-    <Compile Include="BTCeFtcBtcAPI.cs" />
-    <Compile Include="BTCeXpmBtcAPI.cs" />
+    <Compile Include="APIs\BTCeLtcEurAPI.cs" />
+    <Compile Include="APIs\BTCeLtcUsdAPI.cs" />
+    <Compile Include="APIs\BTCeBtcUsdAPI.cs" />
+    <Compile Include="APIs\BTCeBtcRurAPI.cs" />
+    <Compile Include="APIs\BTCeBtcEurAPI.cs" />
+    <Compile Include="APIs\BTCeLtcBtcAPI.cs" />
+    <Compile Include="APIs\BTCeLtcRurAPI.cs" />
+    <Compile Include="APIs\BTCeNmcBtcAPI.cs" />
+    <Compile Include="APIs\BTCeNmcUsdAPI.cs" />
+    <Compile Include="APIs\BTCeNvcBtcAPI.cs" />
+    <Compile Include="APIs\BTCeNvcUsdAPI.cs" />
+    <Compile Include="APIs\BTCeUsdRurAPI.cs" />
+    <Compile Include="APIs\BTCeEurUsdAPI.cs" />
+    <Compile Include="APIs\BTCeTrcBtcAPI.cs" />
+    <Compile Include="APIs\BTCePpcBtcAPI.cs" />
+    <Compile Include="APIs\BTCePpcUsdAPI.cs" />
+    <Compile Include="APIs\BTCeFtcBtcAPI.cs" />
+    <Compile Include="APIs\BTCeXpmBtcAPI.cs" />
+    <Compile Include="BTCeTradeSettings.xaml.cs">
+      <DependentUpon>BTCeTradeSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BTCeTradeSettingsViewModel.cs" />
+    <Compile Include="BTCeTradeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BTCeTradeView.xaml.cs">
       <DependentUpon>BTCeTradeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CryptocoinTicker.Contract\CryptocoinTicker.Contract.csproj">
@@ -102,6 +116,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="BTCeTradeSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="BTCeTradeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

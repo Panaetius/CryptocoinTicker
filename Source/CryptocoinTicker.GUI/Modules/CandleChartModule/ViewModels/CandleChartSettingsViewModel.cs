@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 
+using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
 using CryptocoinTicker.GUI.Helpers;
 

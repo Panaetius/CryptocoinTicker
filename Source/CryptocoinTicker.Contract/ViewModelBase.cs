@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CryptocoinTicker.GUI.Helpers
+namespace CryptocoinTicker.Contract
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
@@ -8,9 +8,9 @@ namespace CryptocoinTicker.GUI.Helpers
 
         public void OnPropertyChanged(string propname)
         {
-            if (PropertyChanged != null)
+            if (this.PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propname));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propname));
             }
         }
     }

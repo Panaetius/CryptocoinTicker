@@ -23,6 +23,7 @@ namespace CryptocoinTicker.BTCePlugins
         {
             //We need to register our Module in MainRegion.
             this.regionViewRegistry.RegisterViewWithRegion("TradeRegion", typeof(BTCeTradeView));
+            this.regionViewRegistry.RegisterViewWithRegion("ApiSettings", typeof(BTCeTradeSettings));
         }
     }
 }

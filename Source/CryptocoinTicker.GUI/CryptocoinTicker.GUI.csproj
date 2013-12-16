@@ -143,8 +143,6 @@
     <Compile Include="DisplayClasses\Point.cs" />
     <Compile Include="DisplayClasses\VolumeBar.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
-    <Compile Include="Helpers\RelayCommand.cs" />
-    <Compile Include="Helpers\ViewModelBase.cs" />
     <Compile Include="DisplayClasses\CurrencyPair.cs" />
     <Compile Include="Modules\PointAndFigureChartModule\PointAndFigureChartSettings.xaml.cs">
       <DependentUpon>PointAndFigureChartSettings.xaml</DependentUpon>

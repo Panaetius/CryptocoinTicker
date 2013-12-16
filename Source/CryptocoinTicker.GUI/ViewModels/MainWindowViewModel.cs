@@ -145,14 +145,26 @@ namespace CryptocoinTicker.GUI.ViewModels
 
                 currenTickerApi = host.GetTicker(value.ExchangeName, value.CurrencyPairName);
 
-                var regionManager = ServiceLocator.Current.GetInstance<IRegionManager>();
+                try
+                {
 
-                var modulemanager = ServiceLocator.Current.GetInstance<IModuleManager>();
-                modulemanager.LoadModule(string.Format("{0}ApiModule", value.ExchangeName));
 
-                // Show Chart
-                var tradeView = new Uri(string.Format("{0}TradeView", value.ExchangeName), UriKind.Relative);
-                regionManager.RequestNavigate("TradeRegion", tradeView);
+                    var regionManager = ServiceLocator.Current.GetInstance<IRegionManager>();
+
+                    var modulemanager = ServiceLocator.Current.GetInstance<IModuleManager>();
+                    modulemanager.LoadModule(string.Format("{0}ApiModule", value.ExchangeName));
+
+                    // Show Chart
+                    var tradeView = new Uri(string.Format("{0}TradeView", value.ExchangeName), UriKind.Relative);
+                    regionManager.RequestNavigate("TradeRegion", tradeView);
+
+                    var tradeSettings = new Uri(string.Format("{0}TradeSettings", value.ExchangeName), UriKind.Relative);
+                    regionManager.RequestNavigate("ApiSettings", tradeSettings);
+                }
+                catch (ModuleNotFoundException)
+                {
+                    //No Trade Module available for currencypair
+                }
 
                 this.TimerOnTick(null, null);
 
