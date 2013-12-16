@@ -10,11 +10,11 @@ using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
 using CryptocoinTicker.GUI.Helpers;
 
+using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
 
 using CandleChart = CryptocoinTicker.GUI.Modules.CandleChartModule.Views.CandleChart;
-using PointAndFigureChart = CryptocoinTicker.GUI.Modules.PointAndFigureChartModule.PointAndFigureChart;
 
 namespace CryptocoinTicker.GUI.ViewModels
 {
@@ -146,6 +146,9 @@ namespace CryptocoinTicker.GUI.ViewModels
                 currenTickerApi = host.GetTicker(value.ExchangeName, value.CurrencyPairName);
 
                 var regionManager = ServiceLocator.Current.GetInstance<IRegionManager>();
+
+                var modulemanager = ServiceLocator.Current.GetInstance<IModuleManager>();
+                modulemanager.LoadModule(string.Format("{0}ApiModule", value.ExchangeName));
 
                 // Show Chart
                 var tradeView = new Uri(string.Format("{0}TradeView", value.ExchangeName), UriKind.Relative);
