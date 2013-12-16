@@ -4,6 +4,10 @@
         xmlns:viewModels="clr-namespace:CryptocoinTicker.GUI.ViewModels"
         xmlns:views="clr-namespace:CryptocoinTicker.GUI.Views"
         xmlns:displayClasses="clr-namespace:CryptocoinTicker.GUI.DisplayClasses"
+        xmlns:regions="http://www.codeplex.com/CompositeWPF"
+        xmlns:candleChartModule11="clr-namespace:CryptocoinTicker.GUI.Modules.CandleChartModule.Views"
+        xmlns:depthChartModule="clr-namespace:CryptocoinTicker.GUI.Modules.DepthChartModule"
+        xmlns:pointAndFigureChartModule="clr-namespace:CryptocoinTicker.GUI.Modules.PointAndFigureChartModule"
         Title="{Binding WindowTitle}" Height="768" Width="1280" Icon="../icon.ico">
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
@@ -21,15 +25,7 @@
                     <Style x:Key="NoHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
                         <Setter Property="Visibility" Value="Collapsed" />
                     </Style>
-                    <DataTemplate DataType="{x:Type views:ChartView}">
-                        <views:ChartView />
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type views:DepthView}">
-                        <views:DepthView />
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type views:PointAndFigureChart}">
-                        <views:PointAndFigureChart/>
-                    </DataTemplate>
+                    
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -86,11 +82,11 @@
                         </ListView>
                     </ScrollViewer>
                 </MenuItem>
-                <MenuItem Header="Settings" Background="Black" Foreground="LightBlue">
+                <MenuItem Header="Settings" Background="Black" Foreground="LightBlue" Focusable="True" StaysOpenOnClick="True">
                     <MenuItem.Resources>
                         <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
                     </MenuItem.Resources>
-                    <Grid Background="Black">
+                    <!--<Grid Background="Black">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -105,17 +101,48 @@
                         <Label Grid.Column="0" Grid.Row="1" Content="Period Size" Foreground="LightBlue"/>
                         <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding PeriodSizes}" DisplayMemberPath="Item1" 
                                   SelectedValuePath="Item2" SelectedValue="{Binding PeriodSize, Mode=TwoWay}"/>
-                    </Grid>
+                    </Grid>-->
+                    <MenuItem StaysOpenOnClick="True">
+                        <MenuItem.Header>
+                            <Grid Background="Black">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <ContentControl Grid.Row="0" Name="ChartSettings" regions:RegionManager.RegionName="ChartSettings"/>
+                                <ContentControl Grid.Row="1" Name="ApiSettings" regions:RegionManager.RegionName="ApiSettings"/>
+                            </Grid>
+                        </MenuItem.Header>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Chart">
                     <MenuItem.Resources>
                         <ResourceDictionary Source="../Styles/MenuStyle.xaml"/>
                     </MenuItem.Resources>
                     <Grid>
-                        <ListView Name="ChartSelection" ItemsSource="{Binding ChartViews}" SelectedItem="{Binding ChartView, Mode=TwoWay}" Foreground="LightBlue" Background="Black" Padding="3" Width="200">
+                        <!--<ListView Name="ChartSelection" ItemsSource="{Binding ChartViews}" SelectedItem="{Binding ChartView, Mode=TwoWay}" Foreground="LightBlue" Background="Black" Padding="3" Width="200">
                             <ListView.View>
                                 <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
                                     <GridViewColumn DisplayMemberBinding="{Binding ChartName}" />
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style>
+                                    <Style.Triggers>
+                                        <Trigger Property="Control.IsMouseOver" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent" />
+                                        </Trigger>
+                                        <Trigger Property="Control.IsFocused" Value="True">
+                                            <Setter Property="Control.Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>-->
+                        <ListView regions:RegionManager.RegionName="ChartMenu" Foreground="LightBlue" Background="Black" Padding="3" Width="200">
+                            <ListView.View>
+                                <GridView ColumnHeaderContainerStyle="{StaticResource NoHeaderStyle}">
+                                    <GridViewColumn DisplayMemberBinding="{Binding}" />
                                 </GridView>
                             </ListView.View>
                             <ListView.ItemContainerStyle>
@@ -142,9 +169,12 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ContentControl Name="ChartView" Content="{Binding ChartView, Mode=TwoWay}" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <!--<ContentControl Name="ChartView" Content="{Binding ChartView, Mode=TwoWay}" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ShowsPreview="True"/>
-                <ContentControl Name="DepthView" Content="{Binding DepthView, Mode=TwoWay}" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <ContentControl Name="DepthView" Content="{Binding DepthView, Mode=TwoWay}" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+                <ContentControl Name="ChartView" regions:RegionManager.RegionName="ChartRegion" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ShowsPreview="True"/>
+                <ContentControl Name="TradeView" regions:RegionManager.RegionName="TradeRegion" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
         </DockPanel>
     </Grid>

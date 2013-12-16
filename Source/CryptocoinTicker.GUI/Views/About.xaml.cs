@@ -31,5 +31,10 @@ namespace CryptocoinTicker.GUI.Views
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        private void OkButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

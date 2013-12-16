@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
+using CryptocoinTicker.GUI.Helpers;
 
 using Point = CryptocoinTicker.GUI.DisplayClasses.Point;
 
-namespace CryptocoinTicker.GUI.Views
+namespace CryptocoinTicker.GUI.Modules.CandleChartModule.Views
 {
     /// <summary>
     /// Interaction logic for ChartView.xaml
     /// </summary>
-    public partial class ChartView : UserControl, IChartView
+    public partial class CandleChart : UserControl, IChartView
     {
         private bool isDragging;
 
@@ -30,20 +26,21 @@ namespace CryptocoinTicker.GUI.Views
 
         private int originalX;
 
-        public ChartView()
+        public CandleChart()
         {
-            this.Candles = new List<Candle>();
+            this.Trades = new List<Trade>();
             this.Volumes = new List<VolumeBar>();
-            Lines = new Dictionary<string, IEnumerable<Point>>();
+            this.Lines = new Dictionary<string, IEnumerable<Point>>();
 
-            X = 0;
+            this.PeriodSize = 100;
+            this.X = 0;
 
-            InitializeComponent();
+            this.InitializeComponent();
 
-            this.MouseLeftButtonDown += new MouseButtonEventHandler(Control_MouseLeftButtonDown);
-            this.MouseLeftButtonUp += new MouseButtonEventHandler(Control_MouseLeftButtonUp);
-            this.MouseMove += new MouseEventHandler(Control_MouseMove);
-            this.MouseWheel += ChartView_MouseWheel;
+            this.MouseLeftButtonDown += new MouseButtonEventHandler(this.Control_MouseLeftButtonDown);
+            this.MouseLeftButtonUp += new MouseButtonEventHandler(this.Control_MouseLeftButtonUp);
+            this.MouseMove += new MouseEventHandler(this.Control_MouseMove);
+            this.MouseWheel += this.ChartView_MouseWheel;
         }
 
         public string ChartName
@@ -72,35 +69,46 @@ namespace CryptocoinTicker.GUI.Views
 
         private Dictionary<string, IEnumerable<Point>> Lines { get; set; }
 
-        private List<Candle> Candles { get; set; }
+        private List<Trade> Trades { get; set; }
 
         private List<VolumeBar> Volumes { get; set; }
 
         private int X { get; set; }
 
-        public void AddCandle(Candle candle)
+        public void AddCandle(Trade trades)
         {
-            if (!this.Candles.Contains(candle))
+            if (!this.Trades.Contains(trades))
             {
-                this.Candles.Add(candle);
+                this.Trades.Add(trades);
             }
         }
 
         public void Redraw()
         {
-            if (this.Candles.Count == 0)
+            if (this.Trades.Count == 0)
             {
                 return;
             }
 
-            var candles = this.Candles.Distinct().OrderByDescending(c => c.Date).Skip(X).Take(this.PeriodsToDisplay).ToList();
+            var candles = this.Trades.GroupBy(t => t.Date.ToUnixTime() / this.PeriodSize)
+                        .Select(
+                            g =>
+                            new Candle
+                            {
+                                Date = DateTimeHelper.DateTimeFromUnixTimestampSeconds(g.Key * this.PeriodSize),
+                                Close = g.Last().Price,
+                                Open = g.First().Price,
+                                High = g.Max(c => c.Price),
+                                Low = g.Min(c => c.Price),
+                                Volume = g.Sum(c => Math.Abs(c.Amount))
+                            }).Distinct().OrderByDescending(c => c.Date).Skip(this.X).Take(this.PeriodsToDisplay).ToList();
 
-            MaxDate = candles.Max(c => c.Date);
-            MinDate = MaxDate.AddSeconds(-1 * this.PeriodSize * this.PeriodsToDisplay);
-            candles = candles.Where(c => c.Date >= MinDate).ToList();
-            MinChartValue = candles.Min(c => c.Low);
-            MaxChartValue = candles.Max(c => c.High);
-            MaxVolumeValue = candles.Max(c => c.Volume);
+            this.MaxDate = candles.Max(c => c.Date);
+            this.MinDate = this.MaxDate.AddSeconds(-1 * this.PeriodSize * this.PeriodsToDisplay);
+            candles = candles.Where(c => c.Date >= this.MinDate).ToList();
+            this.MinChartValue = candles.Min(c => c.Low);
+            this.MaxChartValue = candles.Max(c => c.High);
+            this.MaxVolumeValue = candles.Max(c => c.Volume);
 
             this.DrawTimelineChart();
             this.DrawYLegendChart();
@@ -194,7 +202,7 @@ namespace CryptocoinTicker.GUI.Views
                 rect.Height =
                     Math.Max(
                         (minHeight * Convert.ToDouble(Math.Abs(candle.Open - candle.Close)))
-                        / Convert.ToDouble(MaxChartValue - MinChartValue),
+                        / Convert.ToDouble(this.MaxChartValue - this.MinChartValue),
                         1);
                 rect.SnapsToDevicePixels = true;
                 rect.Stroke = brush;
@@ -240,7 +248,7 @@ namespace CryptocoinTicker.GUI.Views
 
         public void Clear()
         {
-            this.Candles.Clear();
+            this.Trades.Clear();
             this.Lines.Clear();
             this.Volumes.Clear();
             this.ChartCanvas.Children.Clear();
@@ -373,16 +381,16 @@ namespace CryptocoinTicker.GUI.Views
 
         private void Control_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            isDragging = true;
+            this.isDragging = true;
 
-            clickPosition = e.GetPosition(this);
+            this.clickPosition = e.GetPosition(this);
 
-            originalX = this.X;
+            this.originalX = this.X;
         }
 
         private void Control_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            isDragging = false;
+            this.isDragging = false;
 
             this.ChartCanvas.Children.Clear();
             this.Redraw();
@@ -392,17 +400,17 @@ namespace CryptocoinTicker.GUI.Views
         {
             var width = (this.ActualWidth - 50) / this.PeriodsToDisplay;
 
-            if (isDragging)
+            if (this.isDragging)
             {
                 System.Windows.Point currentPosition = e.GetPosition(this.Parent as UIElement);
 
-                var relativeX = currentPosition.X - clickPosition.X;
-                var relativeY = currentPosition.Y - clickPosition.Y;
+                var relativeX = currentPosition.X - this.clickPosition.X;
+                var relativeY = currentPosition.Y - this.clickPosition.Y;
 
                 var relativeChange = relativeX / width;
 
                 this.X = Math.Min(
-                    this.Candles.Count - this.PeriodsToDisplay,
+                    this.Trades.Count - this.PeriodsToDisplay,
                     Math.Max(0, Convert.ToInt32(this.originalX + relativeChange)));
 
                 this.ChartCanvas.Children.Clear();

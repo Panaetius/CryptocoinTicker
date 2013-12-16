@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using CryptocoinTicker.Contract;
@@ -19,19 +11,19 @@ using CryptocoinTicker.GUI.DisplayClasses;
 
 using Point = System.Windows.Point;
 
-namespace CryptocoinTicker.GUI.Views
+namespace CryptocoinTicker.GUI.Modules.DepthChartModule
 {
     /// <summary>
     /// Interaction logic for DepthView.xaml
     /// </summary>
-    public partial class DepthView : UserControl, IDepthView
+    public partial class DepthChart : UserControl, IDepthView
     {
-        public DepthView()
+        public DepthChart()
         {
             InitializeComponent();
 
-            this.MouseLeave += DepthView_MouseLeave;
-            this.DepthCanvas.MouseMove += DepthView_MouseMove;
+            this.MouseLeave += this.DepthView_MouseLeave;
+            this.DepthCanvas.MouseMove += this.DepthView_MouseMove;
         }
 
         private Depth Depth { get; set; }
@@ -101,15 +93,15 @@ namespace CryptocoinTicker.GUI.Views
             points.Add(new Point(0, this.ActualHeight - 30));
             points.Add(new Point(this.ValueToX(bids.First().Price), this.ValueToY(0)));
 
-            BidsPolygon = new Polygon();
-            BidsPolygon.Stroke = new SolidColorBrush(Colors.Red);
-            BidsPolygon.StrokeThickness = 1;
-            BidsPolygon.SnapsToDevicePixels = true;
-            BidsPolygon.Points = points;
-            BidsPolygon.FillRule = FillRule.Nonzero;
-            BidsPolygon.Fill = BidsPolygon.Stroke;
+            this.BidsPolygon = new Polygon();
+            this.BidsPolygon.Stroke = new SolidColorBrush(Colors.Red);
+            this.BidsPolygon.StrokeThickness = 1;
+            this.BidsPolygon.SnapsToDevicePixels = true;
+            this.BidsPolygon.Points = points;
+            this.BidsPolygon.FillRule = FillRule.Nonzero;
+            this.BidsPolygon.Fill = this.BidsPolygon.Stroke;
 
-            this.DepthCanvas.Children.Add(BidsPolygon);
+            this.DepthCanvas.Children.Add(this.BidsPolygon);
         }
 
         private void DrawAsks()
@@ -136,15 +128,15 @@ namespace CryptocoinTicker.GUI.Views
             points.Add(new Point(this.ActualWidth - 50, this.ActualHeight - 30));
             points.Add(new Point(this.ValueToX(asks.First().Price), this.ValueToY(0)));
 
-            AsksPolygon = new Polygon();
-            AsksPolygon.Stroke = new SolidColorBrush(Colors.Green);
-            AsksPolygon.StrokeThickness = 1;
-            AsksPolygon.SnapsToDevicePixels = true;
-            AsksPolygon.Points = points;
-            AsksPolygon.FillRule = FillRule.EvenOdd;
-            AsksPolygon.Fill = AsksPolygon.Stroke;
+            this.AsksPolygon = new Polygon();
+            this.AsksPolygon.Stroke = new SolidColorBrush(Colors.Green);
+            this.AsksPolygon.StrokeThickness = 1;
+            this.AsksPolygon.SnapsToDevicePixels = true;
+            this.AsksPolygon.Points = points;
+            this.AsksPolygon.FillRule = FillRule.EvenOdd;
+            this.AsksPolygon.Fill = this.AsksPolygon.Stroke;
 
-            this.DepthCanvas.Children.Add(AsksPolygon);
+            this.DepthCanvas.Children.Add(this.AsksPolygon);
         }
 
         private void DrawXAxis()
@@ -293,7 +285,7 @@ namespace CryptocoinTicker.GUI.Views
 
             this.Price.Text = string.Format(
                 "Price: {0}",
-                FormatNumDigits(
+                this.FormatNumDigits(
                     ((point.X / (this.ActualWidth - 50)) * Convert.ToDouble(this.MaxPrice - this.MinPrice))
                     + Convert.ToDouble(this.MinPrice),
                     6));

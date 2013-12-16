@@ -31,6 +31,6 @@
                 Github
             </Hyperlink>
         </TextBlock>
-        <Button Content="Ok" Name="OkButton" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="50"></Button>
+        <Button Content="Ok" Name="OkButton" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="50" Click="OkButton_OnClick"></Button>
     </Grid>
 </Window>
