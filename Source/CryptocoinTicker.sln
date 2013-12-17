@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptocoinTicker.GUI", "CryptocoinTicker.GUI\CryptocoinTicker.GUI.csproj", "{DB1CED8C-5C70-4049-8E84-ED09B53FE6A0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4B68B72A-D674-45BC-96CD-EBF19BD18D3D} = {4B68B72A-D674-45BC-96CD-EBF19BD18D3D}
+		{405EBE40-6B44-429A-B739-B5B0AD3BDD98} = {405EBE40-6B44-429A-B739-B5B0AD3BDD98}
 		{1C6A1A42-BD19-4ED4-B94D-4C9BCFB9F16A} = {1C6A1A42-BD19-4ED4-B94D-4C9BCFB9F16A}
 		{CBF0DB79-FBAF-4D3A-976D-7286CF358AD5} = {CBF0DB79-FBAF-4D3A-976D-7286CF358AD5}
 		{A7C8D79B-E421-4EFE-8506-07CF6147AEB0} = {A7C8D79B-E421-4EFE-8506-07CF6147AEB0}
@@ -25,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptocoinTicker.KrakenPlugins", "CryptocoinTicker.KrakenPlugins\CryptocoinTicker.KrakenPlugins.csproj", "{4B68B72A-D674-45BC-96CD-EBF19BD18D3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptocoinTicker.CryptsyPlugins", "CryptocoinTicker.CryptsyPlugins\CryptocoinTicker.CryptsyPlugins.csproj", "{405EBE40-6B44-429A-B739-B5B0AD3BDD98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptocoinTicker.Helpers", "CryptocoinTicker.Helpers\CryptocoinTicker.Helpers.csproj", "{1CABA048-2AC8-428A-8205-62EC1BC80107}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +71,10 @@ Global
 		{405EBE40-6B44-429A-B739-B5B0AD3BDD98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{405EBE40-6B44-429A-B739-B5B0AD3BDD98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{405EBE40-6B44-429A-B739-B5B0AD3BDD98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CABA048-2AC8-428A-8205-62EC1BC80107}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CABA048-2AC8-428A-8205-62EC1BC80107}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CABA048-2AC8-428A-8205-62EC1BC80107}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CABA048-2AC8-428A-8205-62EC1BC80107}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

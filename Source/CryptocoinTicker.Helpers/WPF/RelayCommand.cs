@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace CryptocoinTicker.Contract
+namespace CryptocoinTicker.Helpers.WPF
 {
     public class RelayCommand : ICommand
     {

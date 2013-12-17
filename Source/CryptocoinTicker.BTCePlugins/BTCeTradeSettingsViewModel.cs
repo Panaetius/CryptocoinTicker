@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
-
+using System.Windows.Controls;
 using CryptocoinTicker.Contract;
 
 using Microsoft.Practices.Prism.Regions;
@@ -12,24 +12,20 @@ namespace CryptocoinTicker.BTCePlugins
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class BTCeTradeSettingsViewModel
     {
-        private string apiKey;
-
-        private string apiSecret;
-
         public string ApiKey
         {
             get
             {
                 return
                     ((BTCeTradeViewModel)
-                     ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews
-                         .FirstOrDefault()).ApiKey;
+                     ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>()
+                         .FirstOrDefault().DataContext).ApiKey;
             }
             set
             {
                 ((BTCeTradeViewModel)
-                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.FirstOrDefault(
-                     )).ApiKey = value;
+                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>().FirstOrDefault(
+                     ).DataContext).ApiKey = value;
             }
         }
 
@@ -39,14 +35,14 @@ namespace CryptocoinTicker.BTCePlugins
             {
                 return
                     ((BTCeTradeViewModel)
-                     ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews
-                         .FirstOrDefault()).ApiSecret;
+                     ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>()
+                         .FirstOrDefault().DataContext).ApiSecret;
             }
             set
             {
                 ((BTCeTradeViewModel)
-                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.FirstOrDefault(
-                     )).ApiSecret = value;
+                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>().FirstOrDefault(
+                     ).DataContext).ApiSecret = value;
             }
         }
     }

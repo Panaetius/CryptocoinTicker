@@ -4,32 +4,41 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:btCePlugins="clr-namespace:CryptocoinTicker.BTCePlugins"
+             xmlns:validationRules="clr-namespace:CryptocoinTicker.Helpers.WPF.ValidationRules;assembly=CryptocoinTicker.Helpers"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="600">
     <UserControl.DataContext>
         <btCePlugins:BTCeTradeViewModel/>
     </UserControl.DataContext>
     <Grid HorizontalAlignment="Stretch" Margin="0" Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Label Content="Amount" Grid.Row="0" Grid.Column="0" Foreground="LightBlue"></Label>
-        <TextBox Grid.Row="0" Grid.Column="1"></TextBox>
+        <TextBox Grid.Row="0" Grid.Column="1">
+            <TextBox.Text>
+                <Binding Path="BuyAmount">
+                    <Binding.ValidationRules>
+                        <validationRules:DecimalValidationRule MinValue="0.00000001"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         <Label Content="Price" Grid.Row="1" Grid.Column="0" Foreground="LightBlue"></Label>
         <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
-        <Button Content="Buy" Grid.Row="2" Grid.ColumnSpan="2"></Button>
+        <Button Content="Buy" Grid.Row="2" Grid.Column="1"  Width="100" Height="30" HorizontalAlignment="Left"></Button>
         <Label Content="Amount" Grid.Row="0" Grid.Column="2" Foreground="LightBlue"></Label>
         <TextBox Grid.Row="0" Grid.Column="3"></TextBox>
         <Label Content="Price" Grid.Row="1" Grid.Column="2" Foreground="LightBlue"></Label>
         <TextBox Grid.Row="1" Grid.Column="3"></TextBox>
-        <Button Content="Sell" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"></Button>
+        <Button Content="Sell" Grid.Row="2" Grid.Column="3" Width="100" Height="30" HorizontalAlignment="Left"></Button>
     </Grid>
 </UserControl>

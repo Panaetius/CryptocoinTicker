@@ -197,6 +197,10 @@
       <Project>{F29F0761-B8B6-42F0-8A58-EAFD6DF78D93}</Project>
       <Name>CryptocoinTicker.Contract</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CryptocoinTicker.Helpers\CryptocoinTicker.Helpers.csproj">
+      <Project>{1caba048-2ac8-428a-8205-62ec1bc80107}</Project>
+      <Name>CryptocoinTicker.Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

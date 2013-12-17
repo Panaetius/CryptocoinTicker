@@ -2,12 +2,14 @@
 using System.Windows.Input;
 
 using CryptocoinTicker.Contract;
+using CryptocoinTicker.Helpers;
+using CryptocoinTicker.Helpers.WPF;
 
 namespace CryptocoinTicker.BTCePlugins
 {
     [Export(typeof(ViewModelBase))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    public class BTCeTradeViewModel:ViewModelBase
+    public class BTCeTradeViewModel:ViewModelBase, ITradeViewModel
     {
         public BTCeTradeViewModel()
         {
@@ -17,7 +19,7 @@ namespace CryptocoinTicker.BTCePlugins
 
         private void Buy(object obj)
         {
-            throw new System.NotImplementedException();
+            //Api.
         }
 
         private void Sell(object obj)
@@ -32,17 +34,18 @@ namespace CryptocoinTicker.BTCePlugins
         private string sellAmount;
 
         private string sellPrice;
+        private ITickerApi _api;
 
         public string ApiKey
         {
             get
             {
-                return Settings.Default.ApiKey;
+                return Settings.Default.ApiKey.DecryptString().ToInsecureString();
             }
 
             set
             {
-                Settings.Default.ApiKey = value;
+                Settings.Default.ApiKey = value.ToSecureString().EncryptString();
                 Settings.Default.Save();
             }
         }
@@ -51,12 +54,12 @@ namespace CryptocoinTicker.BTCePlugins
         {
             get
             {
-                return Settings.Default.ApiSecret;
+                return Settings.Default.ApiSecret.DecryptString().ToInsecureString();
             }
 
             set
             {
-                Settings.Default.ApiSecret = value;
+                Settings.Default.ApiSecret = value.ToSecureString().EncryptString();
                 Settings.Default.Save();
             }
         }
@@ -110,6 +113,20 @@ namespace CryptocoinTicker.BTCePlugins
             {
                 this.sellPrice = value;
                 this.OnPropertyChanged("SellPrice");
+            }
+        }
+
+        public ITickerApi Api
+        {
+            get
+            {
+                return _api; 
+                
+            }
+            set
+            {
+                _api = value;
+                this.OnPropertyChanged("Api");
             }
         }
 

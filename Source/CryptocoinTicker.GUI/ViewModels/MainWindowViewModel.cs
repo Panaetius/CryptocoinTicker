@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 using CryptocoinTicker.BusinessLogic;
@@ -160,6 +161,10 @@ namespace CryptocoinTicker.GUI.ViewModels
 
                     var tradeSettings = new Uri(string.Format("{0}TradeSettings", value.ExchangeName), UriKind.Relative);
                     regionManager.RequestNavigate("ApiSettings", tradeSettings);
+
+                    ((ITradeViewModel)
+                        regionManager.Regions["TradeView"].ActiveViews.Cast<UserControl>().FirstOrDefault().DataContext)
+                        .Api = currenTickerApi;
                 }
                 catch (ModuleNotFoundException)
                 {
