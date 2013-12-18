@@ -19,9 +19,9 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Label Content="BTCe API Key" Grid.Row="0" Grid.Column="0"></Label>
+        <Label Content="BTCe API Key" Grid.Row="0" Grid.Column="0" Foreground="LightBlue"></Label>
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ApiKey, Mode=TwoWay}"></TextBox>
-        <Label Content="BTCe API Key" Grid.Row="1" Grid.Column="0"></Label>
+        <Label Content="BTCe API Key" Grid.Row="1" Grid.Column="0" Foreground="LightBlue"></Label>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ApiSecret, Mode=TwoWay}"></TextBox>
     </Grid>
 </UserControl>

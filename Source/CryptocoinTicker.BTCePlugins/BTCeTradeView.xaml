@@ -33,12 +33,36 @@
             </TextBox.Text>
         </TextBox>
         <Label Content="Price" Grid.Row="1" Grid.Column="0" Foreground="LightBlue"></Label>
-        <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
-        <Button Content="Buy" Grid.Row="2" Grid.Column="1"  Width="100" Height="30" HorizontalAlignment="Left"></Button>
+        <TextBox Grid.Row="1" Grid.Column="1">
+            <TextBox.Text>
+                <Binding Path="BuyPrice">
+                    <Binding.ValidationRules>
+                        <validationRules:DecimalValidationRule MinValue="0.00000001"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Button Content="Buy" Grid.Row="2" Grid.Column="1"  Width="100" Height="30" HorizontalAlignment="Left" Command="{Binding BuyCommand}"></Button>
         <Label Content="Amount" Grid.Row="0" Grid.Column="2" Foreground="LightBlue"></Label>
-        <TextBox Grid.Row="0" Grid.Column="3"></TextBox>
+        <TextBox Grid.Row="0" Grid.Column="3">
+            <TextBox.Text>
+                <Binding Path="SellAmount">
+                    <Binding.ValidationRules>
+                        <validationRules:DecimalValidationRule MinValue="0.00000001"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         <Label Content="Price" Grid.Row="1" Grid.Column="2" Foreground="LightBlue"></Label>
-        <TextBox Grid.Row="1" Grid.Column="3"></TextBox>
-        <Button Content="Sell" Grid.Row="2" Grid.Column="3" Width="100" Height="30" HorizontalAlignment="Left"></Button>
+        <TextBox Grid.Row="1" Grid.Column="3">
+            <TextBox.Text>
+                <Binding Path="SellPrice">
+                    <Binding.ValidationRules>
+                        <validationRules:DecimalValidationRule MinValue="0.00000001"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Button Content="Sell" Grid.Row="2" Grid.Column="3" Width="100" Height="30" HorizontalAlignment="Left" Command="{Binding SellCommand}"></Button>
     </Grid>
 </UserControl>

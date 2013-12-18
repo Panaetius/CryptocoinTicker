@@ -19,12 +19,28 @@ namespace CryptocoinTicker.BTCePlugins
 
         private void Buy(object obj)
         {
-            //Api.
+            decimal amount;
+            decimal price;
+
+            if (!decimal.TryParse(this.BuyAmount, out amount) || !decimal.TryParse(this.BuyPrice, out price))
+            {
+                return;
+            }
+
+            this.ActualApi.Buy(price, amount);
         }
 
         private void Sell(object obj)
         {
-            throw new System.NotImplementedException();
+            decimal amount;
+            decimal price;
+
+            if (!decimal.TryParse(this.SellAmount, out amount) || !decimal.TryParse(this.SellPrice, out price))
+            {
+                return;
+            }
+
+            this.ActualApi.Sell(price, amount);
         }
 
         private string buyAmount;

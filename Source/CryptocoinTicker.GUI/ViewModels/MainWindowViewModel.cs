@@ -163,7 +163,7 @@ namespace CryptocoinTicker.GUI.ViewModels
                     regionManager.RequestNavigate("ApiSettings", tradeSettings);
 
                     ((ITradeViewModel)
-                        regionManager.Regions["TradeView"].ActiveViews.Cast<UserControl>().FirstOrDefault().DataContext)
+                        regionManager.Regions["TradeRegion"].ActiveViews.Cast<UserControl>().FirstOrDefault().DataContext)
                         .Api = currenTickerApi;
                 }
                 catch (ModuleNotFoundException)

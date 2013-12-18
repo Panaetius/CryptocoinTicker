@@ -69,24 +69,6 @@
   <ItemGroup>
     <Compile Include="BTCeAPI.cs" />
     <Compile Include="BTCeApiModule.cs" />
-    <Compile Include="APIs\BTCeLtcEurAPI.cs" />
-    <Compile Include="APIs\BTCeLtcUsdAPI.cs" />
-    <Compile Include="APIs\BTCeBtcUsdAPI.cs" />
-    <Compile Include="APIs\BTCeBtcRurAPI.cs" />
-    <Compile Include="APIs\BTCeBtcEurAPI.cs" />
-    <Compile Include="APIs\BTCeLtcBtcAPI.cs" />
-    <Compile Include="APIs\BTCeLtcRurAPI.cs" />
-    <Compile Include="APIs\BTCeNmcBtcAPI.cs" />
-    <Compile Include="APIs\BTCeNmcUsdAPI.cs" />
-    <Compile Include="APIs\BTCeNvcBtcAPI.cs" />
-    <Compile Include="APIs\BTCeNvcUsdAPI.cs" />
-    <Compile Include="APIs\BTCeUsdRurAPI.cs" />
-    <Compile Include="APIs\BTCeEurUsdAPI.cs" />
-    <Compile Include="APIs\BTCeTrcBtcAPI.cs" />
-    <Compile Include="APIs\BTCePpcBtcAPI.cs" />
-    <Compile Include="APIs\BTCePpcUsdAPI.cs" />
-    <Compile Include="APIs\BTCeFtcBtcAPI.cs" />
-    <Compile Include="APIs\BTCeXpmBtcAPI.cs" />
     <Compile Include="BTCeTradeSettings.xaml.cs">
       <DependentUpon>BTCeTradeSettings.xaml</DependentUpon>
     </Compile>

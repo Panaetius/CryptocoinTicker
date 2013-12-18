@@ -29,9 +29,7 @@ namespace CryptocoinTicker.BTCePlugins
         }
 
         private long nonce;
-
-        private List<long> _orderIDs = new List<long>();
-
+        
         protected BTCeAPI()
         {
             nonce = Convert.ToInt64(DateTime.Now.Subtract(UnixEpoch).TotalSeconds);
@@ -60,6 +58,11 @@ namespace CryptocoinTicker.BTCePlugins
                 return config;
             }
         }
+
+        public abstract long Buy(decimal price, decimal amount);
+
+        public abstract long Sell(decimal price, decimal amount);
+
 
         public IEnumerable<Trade> GetTrades(string currencyPair)
         {
@@ -154,7 +157,7 @@ namespace CryptocoinTicker.BTCePlugins
             return new Depth{Asks = asks, Bids = bids};
         }
 
-        protected long MakeOrder(string type, double amount, double unitPrice, string fromCurrency, string toCurrency)
+        protected long MakeOrder(string type, decimal amount, decimal unitPrice, string fromCurrency, string toCurrency)
         {
             var requestParams = new Dictionary<string, string>();
 
@@ -164,7 +167,7 @@ namespace CryptocoinTicker.BTCePlugins
                 "pair",
                 string.Format("{0}_{1}", fromCurrency.ToLower(), toCurrency.ToLower()));
 
-            requestParams.Add("type", type.ToString().ToLower());
+            requestParams.Add("type", type.ToLower());
 
             requestParams.Add("rate", Math.Round(unitPrice, 8).ToString());
 
@@ -174,10 +177,6 @@ namespace CryptocoinTicker.BTCePlugins
 
             return result["order_id"].Value<long>();
         }
-
-        protected abstract void Buy(decimal price, decimal amount);
-
-        protected abstract void Sell(decimal price, decimal amount);
 
         private string SimpleWebRequest(string url)
         {

@@ -14,15 +14,23 @@
     {
         public async Task<IEnumerable<Trade>> GetTrades()
         {
-            return await Task.Run(() => this.GetTrades("<#=fromCurrency.ToLower() #>", "<#=toCurrency.ToLower() #>"));
+            return await Task.Run(() => this.GetTrades("<#=fromCurrency.ToLower() #>_<#=toCurrency.ToLower() #>"));
         }
 
         public async Task<Depth> GetDepth()
         {
-            return await Task.Run(() => this.GetDepth("<#=fromCurrency.ToLower() #>", "<#=toCurrency.ToLower() #>"));
+            return await Task.Run(() => this.GetDepth("<#=fromCurrency.ToLower() #>_<#=toCurrency.ToLower() #>"));
         }
 
-		public long Buy
+		public override long Buy(decimal price, decimal amount)
+        {
+            return MakeOrder("buy", amount, price, "<#=fromCurrency.ToLower() #>", "<#=toCurrency.ToLower() #>");
+        }
+
+        public override long Sell(decimal price, decimal amount)
+        {
+            return MakeOrder("sell", amount, price, "<#=fromCurrency.ToLower() #>", "<#=toCurrency.ToLower() #>");
+        }
     }
 <#+
   }
