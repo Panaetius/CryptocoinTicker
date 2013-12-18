@@ -36,34 +36,6 @@ namespace CryptocoinTicker.BTCePlugins
         private string sellPrice;
         private ITickerApi _api;
 
-        public string ApiKey
-        {
-            get
-            {
-                return Settings.Default.ApiKey.DecryptString().ToInsecureString();
-            }
-
-            set
-            {
-                Settings.Default.ApiKey = value.ToSecureString().EncryptString();
-                Settings.Default.Save();
-            }
-        }
-
-        public string ApiSecret
-        {
-            get
-            {
-                return Settings.Default.ApiSecret.DecryptString().ToInsecureString();
-            }
-
-            set
-            {
-                Settings.Default.ApiSecret = value.ToSecureString().EncryptString();
-                Settings.Default.Save();
-            }
-        }
-
         public string BuyAmount
         {
             get
@@ -128,6 +100,11 @@ namespace CryptocoinTicker.BTCePlugins
                 _api = value;
                 this.OnPropertyChanged("Api");
             }
+        }
+
+        protected BTCeAPI ActualApi
+        {
+            get { return (BTCeAPI) Api; }
         }
 
         public ICommand BuyCommand { get; set; }

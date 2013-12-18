@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Controls;
 using CryptocoinTicker.Contract;
-
+using CryptocoinTicker.Helpers;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
 
@@ -16,16 +16,13 @@ namespace CryptocoinTicker.BTCePlugins
         {
             get
             {
-                return
-                    ((BTCeTradeViewModel)
-                     ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>()
-                         .FirstOrDefault().DataContext).ApiKey;
+                return Settings.Default.ApiKey.DecryptString().ToInsecureString();
             }
+
             set
             {
-                ((BTCeTradeViewModel)
-                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>().FirstOrDefault(
-                     ).DataContext).ApiKey = value;
+                Settings.Default.ApiKey = value.ToSecureString().EncryptString();
+                Settings.Default.Save();
             }
         }
 
@@ -33,16 +30,13 @@ namespace CryptocoinTicker.BTCePlugins
         {
             get
             {
-                return
-                    ((BTCeTradeViewModel)
-                     ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>()
-                         .FirstOrDefault().DataContext).ApiSecret;
+                return Settings.Default.ApiSecret.DecryptString().ToInsecureString();
             }
+
             set
             {
-                ((BTCeTradeViewModel)
-                 ServiceLocator.Current.GetInstance<IRegionManager>().Regions["TradeRegion"].ActiveViews.Cast<UserControl>().FirstOrDefault(
-                     ).DataContext).ApiSecret = value;
+                Settings.Default.ApiSecret = value.ToSecureString().EncryptString();
+                Settings.Default.Save();
             }
         }
     }

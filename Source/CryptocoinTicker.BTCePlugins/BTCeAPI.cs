@@ -5,18 +5,37 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 using CryptocoinTicker.Contract;
-
+using CryptocoinTicker.Helpers;
 using Newtonsoft.Json.Linq;
 
 namespace CryptocoinTicker.BTCePlugins
 {
-    public class BTCeAPI
+    public abstract class BTCeAPI
     {
         private static Configuration config;
 
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        private long Nonce
+        {
+            get
+            {
+                return ++nonce;
+            }
+        }
+
+        private long nonce;
+
+        private List<long> _orderIDs = new List<long>();
+
+        protected BTCeAPI()
+        {
+            nonce = Convert.ToInt64(DateTime.Now.Subtract(UnixEpoch).TotalSeconds);
+        }
 
         public static Configuration CurrentConfiguration
         {
@@ -135,9 +154,102 @@ namespace CryptocoinTicker.BTCePlugins
             return new Depth{Asks = asks, Bids = bids};
         }
 
+        protected long MakeOrder(string type, double amount, double unitPrice, string fromCurrency, string toCurrency)
+        {
+            var requestParams = new Dictionary<string, string>();
+
+            requestParams.Add("method", "Trade");
+
+            requestParams.Add(
+                "pair",
+                string.Format("{0}_{1}", fromCurrency.ToLower(), toCurrency.ToLower()));
+
+            requestParams.Add("type", type.ToString().ToLower());
+
+            requestParams.Add("rate", Math.Round(unitPrice, 8).ToString());
+
+            requestParams.Add("amount", Math.Round(amount, 8).ToString());
+
+            var result = this.QueryWebRequest(requestParams);
+
+            return result["order_id"].Value<long>();
+        }
+
+        protected abstract void Buy(decimal price, decimal amount);
+
+        protected abstract void Sell(decimal price, decimal amount);
+
         private string SimpleWebRequest(string url)
         {
             return new WebClient().DownloadString(url);
+        }
+
+        private JObject QueryWebRequest(Dictionary<string, string> args)
+        {
+            args.Add("nonce", this.Nonce.ToString());
+
+            var postParams = BuildPostParameters(args);
+
+            var request = WebRequest.Create(new Uri(CurrentConfiguration.AppSettings.Settings["BTCeQueryUrl"].Value)) as HttpWebRequest;
+            if (request == null)
+            {
+                throw new Exception("Non HTTP WebRequest");
+            }
+
+            request.Method = "POST";
+            request.Timeout = 15000;
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = postParams.Length;
+
+            var hashMaker = new HMACSHA512(Encoding.ASCII.GetBytes(Settings.Default.ApiSecret.DecryptString().ToInsecureString()));
+
+            request.Headers.Add("Key", Settings.Default.ApiKey.DecryptString().ToInsecureString());
+            request.Headers.Add("Sign", ByteArrayToString(hashMaker.ComputeHash(postParams)).ToLower());
+
+            var reqStream = request.GetRequestStream();
+            reqStream.Write(postParams, 0, postParams.Length);
+            reqStream.Close();
+
+            var result = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
+
+            var jresult = JObject.Parse(result);
+
+            if (jresult["success"].Value<int>() != 1)
+            {
+                var message = jresult["error"].Value<string>();
+
+                if (message == "no orders")
+                {
+                    return new JObject();
+                }
+
+                throw new Exception(message);
+            }
+
+            return jresult["return"] as JObject;
+        }
+
+        private static byte[] BuildPostParameters(Dictionary<string, string> args)
+        {
+            var s = new StringBuilder();
+
+            foreach (var item in args)
+            {
+                s.AppendFormat("{0}={1}", item.Key, HttpUtility.UrlEncode(item.Value));
+                s.Append("&");
+            }
+
+            if (s.Length > 0)
+            {
+                s.Remove(s.Length - 1, 1);
+            }
+
+            return Encoding.ASCII.GetBytes(s.ToString());
+        }
+
+        private string ByteArrayToString(byte[] ba)
+        {
+            return BitConverter.ToString(ba).Replace("-", string.Empty);
         }
     }
 }

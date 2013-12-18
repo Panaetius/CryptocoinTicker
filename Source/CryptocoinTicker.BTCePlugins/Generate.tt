@@ -1,0 +1,45 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="GenerateAPIs.tt" #>
+<#
+List<Tuple<string, string>> currencies = new List<Tuple<string, string>>{
+                            new Tuple<string, string>("Btc", "Eur"),
+							new Tuple<string, string>("Btc", "Rur"),
+							new Tuple<string, string>("Btc", "Usd"),
+							new Tuple<string, string>("Eur", "Usd"),
+							new Tuple<string, string>("Ftc", "Btc"),
+							new Tuple<string, string>("Ltc", "Btc"),
+							new Tuple<string, string>("Ltc", "Eur"),
+							new Tuple<string, string>("Ltc", "Rur"),
+							new Tuple<string, string>("Ltc", "Usd"),
+							new Tuple<string, string>("Nmc", "Btc"),
+							new Tuple<string, string>("Nmc", "Usd"),
+							new Tuple<string, string>("Nvc", "Btc"),
+							new Tuple<string, string>("Nvc", "Usd"),
+							new Tuple<string, string>("Ppc", "Btc"),
+							new Tuple<string, string>("Ppc", "Usd"),
+							new Tuple<string, string>("Trc", "Btc"),
+							new Tuple<string, string>("Usd", "Rur"),
+							new Tuple<string, string>("Xpm", "Btc")};
+
+                            #>
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Threading.Tasks;
+
+using CryptocoinTicker.Contract;
+
+using CryptocoinTicker.BTCePlugins;
+
+namespace CryptocoinTicker.BTCePlugins
+{
+                            <#
+foreach(Tuple<string,string> pair in currencies){
+        GenerateAPI(pair.Item1, pair.Item2);
+        
+  }
+  #>
+  }
