@@ -30,8 +30,8 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             this.regionViewRegistry.RegisterViewWithRegion("ChartMenu", () => subItem);
 
             //We need to register our Module in MainRegion.
-            this.regionViewRegistry.RegisterViewWithRegion("ChartRegion", typeof(PointAndFigureChart));
-            this.regionViewRegistry.RegisterViewWithRegion("ChartSettings", typeof(PointAndFigureChartSettings));
+            this.regionViewRegistry.RegisterViewWithRegion("ChartRegion", typeof(Views.PointAndFigureChart));
+            this.regionViewRegistry.RegisterViewWithRegion("ChartSettings", typeof(Views.PointAndFigureChartSettings));
         }
 
         public void ShowView()

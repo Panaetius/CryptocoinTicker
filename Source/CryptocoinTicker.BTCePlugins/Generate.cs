@@ -20,8 +20,7 @@ using CryptocoinTicker.BTCePlugins;
 
 namespace CryptocoinTicker.BTCePlugins
 {
-                            
-	[Export(typeof(ITickerApi))]
+    [Export(typeof(ITickerApi))]
     [ExportMetadata("Exchange", "BTCe")]
     [ExportMetadata("Pair", "BTC/EUR")]
     public class BTCeBtcEurAPI : BTCeAPI, ITickerApi
@@ -36,7 +35,7 @@ namespace CryptocoinTicker.BTCePlugins
             return await Task.Run(() => this.GetDepth("btc_eur"));
         }
 
-		public override long Buy(decimal price, decimal amount)
+        public override long Buy(decimal price, decimal amount)
         {
             return MakeOrder("buy", amount, price, "btc", "eur");
         }

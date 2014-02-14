@@ -93,9 +93,6 @@
     <Compile Include="Modules\DepthChartModule\DepthChartSettings.xaml.cs">
       <DependentUpon>DepthChartSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\PointAndFigureChartModule\PointAndFigureChart.xaml.cs">
-      <DependentUpon>PointAndFigureChart.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Modules\PointAndFigureChartModule\PointAndFigureChartModule.cs" />
     <Page Include="Modules\CandleChartModule\Views\CandleChart.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -113,13 +110,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Modules\PointAndFigureChartModule\PointAndFigureChart.xaml">
+    <Page Include="Modules\PointAndFigureChartModule\Views\PointAndFigureChart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Modules\PointAndFigureChartModule\PointAndFigureChartSettings.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Modules\PointAndFigureChartModule\Views\PointAndFigureChartSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\MenuStyle.xaml">
       <SubType>Designer</SubType>
@@ -144,7 +141,11 @@
     <Compile Include="DisplayClasses\VolumeBar.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="DisplayClasses\CurrencyPair.cs" />
-    <Compile Include="Modules\PointAndFigureChartModule\PointAndFigureChartSettings.xaml.cs">
+    <Compile Include="Modules\PointAndFigureChartModule\ViewModels\PointAndFigureSettingsViewModel.cs" />
+    <Compile Include="Modules\PointAndFigureChartModule\Views\PointAndFigureChart.xaml.cs">
+      <DependentUpon>PointAndFigureChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\PointAndFigureChartModule\Views\PointAndFigureChartSettings.xaml.cs">
       <DependentUpon>PointAndFigureChartSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\DateTimeHelper.cs" />

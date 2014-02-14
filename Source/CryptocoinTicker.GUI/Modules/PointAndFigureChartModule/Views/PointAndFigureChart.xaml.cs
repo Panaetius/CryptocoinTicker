@@ -7,13 +7,11 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using CryptocoinTicker.Contract;
 using CryptocoinTicker.GUI.DisplayClasses;
-using CryptocoinTicker.GUI.Helpers;
 
 using Point = CryptocoinTicker.GUI.DisplayClasses.Point;
 
-namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
+namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule.Views
 {
     /// <summary>
     /// Interaction logic for PointAndFigureChart.xaml
@@ -29,6 +27,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             this.Candles = new List<Candle>();
             this.PeriodSize = 900;
             this.PeriodsToDisplay = 100;
+            this.BoxSize = -0.04m;
         }
 
         public string ChartName
@@ -103,18 +102,23 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             this.MinChartValue = candles.Min(c => c.Low);
             this.MaxChartValue = candles.Max(c => c.High);
 
-            this.BoxSize = (this.MaxChartValue - this.MinChartValue) / 20;
-
-            this.MinChartValue = Math.Round(this.MinChartValue / this.BoxSize, 0) * this.BoxSize;
-            this.MaxChartValue = Math.Round(this.MaxChartValue / this.BoxSize, 0) * this.BoxSize;
-
             var firstCandle = candles.First();
 
             candles = candles.Skip(1).ToList();
 
+            var boxSize = this.BoxSize;
+
+            if (boxSize < 0)
+            {
+                boxSize = boxSize * -1 * this.MaxChartValue;
+            }
+
+            this.MinChartValue = Math.Round(this.MinChartValue / boxSize, 0) * boxSize;
+            this.MaxChartValue = Math.Round(this.MaxChartValue / boxSize, 0) * boxSize;
+
             var boxes = new List<Box>();
 
-            var lastBox = new Box(Math.Round(firstCandle.Close / this.BoxSize, 0) * this.BoxSize, 0, false);
+            var lastBox = new Box(Math.Round(firstCandle.Close / boxSize, 0) * boxSize, 0, false);
 
             boxes.Add(lastBox);
 
@@ -124,20 +128,20 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
                 {
                     if (Math.Round(candle.High, 1) - lastBox.Price > 0)
                     {
-                        for (decimal i = lastBox.Price; i < Math.Round(candle.High, 1); i+=this.BoxSize)
+                        for (decimal i = lastBox.Price; i < Math.Round(candle.High, 1); i += boxSize)
                         {
-                            lastBox = new Box(Math.Round(i / this.BoxSize, 0) * this.BoxSize, lastBox.Column, true);
+                            lastBox = new Box(Math.Round(i / boxSize, 0) * boxSize, lastBox.Column, true);
 
                             boxes.Add(lastBox);
                         }
                         
                     }
-                    else if (Math.Round(candle.Low, 1) - lastBox.Price <= 3 * this.BoxSize)
+                    else if (Math.Round(candle.Low, 1) - lastBox.Price <= 3 * boxSize)
                     {
                         var col = lastBox.Column + 1;
-                        for (decimal i = lastBox.Price - this.BoxSize; i > Math.Round(candle.Low, 1); i -= this.BoxSize)
+                        for (decimal i = lastBox.Price - boxSize; i > Math.Round(candle.Low, 1); i -= boxSize)
                         {
-                            lastBox = new Box(Math.Round(i/ this.BoxSize, 0) * this.BoxSize, col, false);
+                            lastBox = new Box(Math.Round(i / boxSize, 0) * boxSize, col, false);
 
                             boxes.Add(lastBox);
                         }
@@ -147,9 +151,9 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
                 {
                     if (Math.Round(candle.Low, 1) - lastBox.Price < 0)
                     {
-                        for (decimal i = lastBox.Price; i > Math.Round(candle.Low, 1); i -= this.BoxSize)
+                        for (decimal i = lastBox.Price; i > Math.Round(candle.Low, 1); i -= boxSize)
                         {
-                            lastBox = new Box(Math.Round(i / this.BoxSize, 0) * this.BoxSize, lastBox.Column, false);
+                            lastBox = new Box(Math.Round(i / boxSize, 0) * boxSize, lastBox.Column, false);
 
                             boxes.Add(lastBox);
                         }
@@ -158,9 +162,9 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
                     else if (Math.Round(candle.High, 1) - lastBox.Price >= 3 * this.BoxSize)
                     {
                         var col = lastBox.Column + 1;
-                        for (decimal i = lastBox.Price + this.BoxSize; i < Math.Round(candle.High, 1); i += this.BoxSize)
+                        for (decimal i = lastBox.Price + boxSize; i < Math.Round(candle.High, 1); i += boxSize)
                         {
-                            lastBox = new Box(Math.Round(i / this.BoxSize, 0) * this.BoxSize, col, true);
+                            lastBox = new Box(Math.Round(i / boxSize, 0) * boxSize, col, true);
 
                             boxes.Add(lastBox);
                         }
@@ -169,16 +173,17 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             }
 
             var colums = boxes.Max(b => b.Column);
+            var rows = Math.Ceiling((boxes.Max(b => b.Price) - boxes.Min(b => b.Price)) / boxSize);
             var width = this.AreaWidth / this.PeriodsToDisplay;
             var height = this.AreaHeight / 20;
             boxes = boxes.Where(b => b.Column > (colums - 100)).ToList();
 
-            this.DrawYLegendChart();
+            this.DrawYLegendChart(rows);
             this.DrawGridlines();
 
             foreach (var box in boxes)
             {
-                var y = this.AreaHeight * Convert.ToDouble(1m - ((box.Price - this.MinChartValue) / (this.MaxChartValue - this.MinChartValue)));
+                var y = this.AreaHeight * Convert.ToDouble(1m - ((box.Price - this.MinChartValue) / (boxSize + this.MaxChartValue - this.MinChartValue)));
                 var x = this.AreaWidth * ((1.0 * box.Column + Math.Max(0, this.PeriodsToDisplay - colums - 1)) / this.PeriodsToDisplay);
 
                 if (box.IsX)
@@ -242,7 +247,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             this.ChartCanvas.Children.Clear();
         }
 
-        private void DrawYLegendChart()
+        private void DrawYLegendChart(decimal numRows)
         {
             var height = this.AreaHeight;
             var line = new Line();
@@ -254,9 +259,11 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
             line.SnapsToDevicePixels = true;
             line.StrokeThickness = 1;
 
+            numRows += 1;
+
             this.ChartCanvas.Children.Add(line);
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < numRows; i++)
             {
                 var horLine = new Line();
                 horLine.Stroke = line.Stroke;
@@ -265,13 +272,13 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule
 
                 horLine.X1 = 0;
                 horLine.X2 = this.AreaWidth + 5;
-                horLine.Y1 = height - (i * height / 20);
+                horLine.Y1 = height - (i * height / Convert.ToDouble(numRows));
                 horLine.Y2 = horLine.Y1;
 
                 this.ChartCanvas.Children.Add(horLine);
 
                 var text = new TextBox();
-                text.Text = this.FormatNumDigits((i * ((this.MaxChartValue - this.MinChartValue) / 20)) + this.MinChartValue, 5);
+                text.Text = this.FormatNumDigits((i * ((this.MaxChartValue - this.MinChartValue) / numRows)) + this.MinChartValue, 5);
                 text.Background = new SolidColorBrush(Colors.Black);
                 text.Foreground = new SolidColorBrush(Colors.LightBlue);
                 text.BorderThickness = new Thickness(0);
