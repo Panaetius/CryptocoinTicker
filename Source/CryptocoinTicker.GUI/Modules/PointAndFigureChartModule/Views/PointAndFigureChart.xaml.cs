@@ -110,6 +110,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule.Views
 
             if (boxSize < 0)
             {
+                //Boxsize in percent
                 boxSize = boxSize * -1 * this.MaxChartValue;
             }
 
@@ -124,6 +125,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule.Views
 
             foreach (var candle in candles)
             {
+                //Logic to determine whether to draw an X or an O
                 if (lastBox.IsX)
                 {
                     if (Math.Round(candle.High, 1) - lastBox.Price > 0)
@@ -183,6 +185,7 @@ namespace CryptocoinTicker.GUI.Modules.PointAndFigureChartModule.Views
 
             foreach (var box in boxes)
             {
+                //drawing routine
                 var y = this.AreaHeight * Convert.ToDouble(1m - ((box.Price - this.MinChartValue) / (boxSize + this.MaxChartValue - this.MinChartValue)));
                 var x = this.AreaWidth * ((1.0 * box.Column + Math.Max(0, this.PeriodsToDisplay - colums - 1)) / this.PeriodsToDisplay);
 
